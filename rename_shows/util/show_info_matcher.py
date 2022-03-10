@@ -16,12 +16,15 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import re
+from typing import Union
 
 
 class ShowInfoMatcher:
     """
     Class to match show information from a the file name passed.
     """
+    def __str__(self):
+        return  self.to_dictionary()
 
     def __init__(self, file_name: str):
         self.__file_name = file_name
@@ -34,32 +37,61 @@ class ShowInfoMatcher:
         self.language: str = self.__match_language()
         self.edition: str = self.__match_edition()
         self.tags: str = self.__match_tags()
-        self.releaseInfo: str = self.__match_release_info()
+        self.release_info: str = self.__match_release_info()
         self.season: str = self.__match_season()
         self.episode: str = self.__match_episode()
-        self.release_info: str = self.__match_release_info()
+        self.release_group: str = self.__match_release_group()
 
-    def __match_title(self) -> str:
+    def to_dictionary(self) -> dict:
+        """
+        Returns show info as a dictionary.
+        """
+        return {
+            "title": self.title,
+            "year": self.year,
+            "resolution": self.resolution,
+            "source": self.source,
+            "video_codec": self.video_codec,
+            "audio": self.audio,
+            "language": self.language,
+            "edition": self.edition,
+            "tags": self.tags,
+            "release_info": self.release_info,
+            "season": self.season,
+            "episode": self.episode,
+            "release_group": self.release_group,
+        }
+
+    def __match_title(self) -> Union[str, None]:
+        """
+        Matches the title of the show.
+        """
         regex = "(.*?)(\\W| - )(directors(.?)cut|480p|720p|1080p|dvdrip|xvid|cd[0-9]|bluray|dvdscr|brrip|divx|S[0-9]{1,3}E[0-9]{1,3}|Season[\\s,0-9]{1,4}|[\\{\\(\\[]?[0-9]{4}).*"
         pattern = re.compile(regex, flags=re.IGNORECASE)
         matcher = pattern.search(self.__file_name)
 
         if matcher:
-            return matcher.group(1).replace(".", " ")
+            return matcher.group(1).replace(".", " ").strip()  # remove leading and trailing whitespace
         else:
             return None
 
-    def __match_year(self) -> str:
+    def __match_year(self) -> Union[str, None]:
+        """
+        Matches the year of the show.
+        """
         regex = "[\\.\\s](?!^)[1,2]\\d{3}[\\.\\s]"
         pattern = re.compile(regex, flags=re.IGNORECASE)
         matcher = pattern.search(self.__file_name)
 
         if matcher:
-            return matcher.group(0)[1:-1]
+            return matcher.group(0).strip('.')  # remove leading and trailing '.'
         else:
             return None
 
-    def __match_resolution(self) -> str:
+    def __match_resolution(self) -> Union[str, None]:
+        """
+        Matches the resoltion of the show.
+        """
         regex = "\\d{3,4}p"
         pattern = re.compile(regex, flags=re.IGNORECASE)
         matcher = pattern.search(self.__file_name)
@@ -69,364 +101,139 @@ class ShowInfoMatcher:
         else:
             return None
 
-    def __match_source(self) -> str:
-        pass
+    def __match_source(self) -> Union[str, None]:
+        """
+        Matches the source of the show.
+        """
+        regex = "[\\.\\s](CAM|(DVD|BD)SCR|SCR|DDC|R5[\\.\\s]LINE|R5|(DVD|HD|BR|BD|WEB)Rip|DVDR|(HD|PD)TV|WEB-DL|WEBDL|BluRay|Blu-Ray|TS(?!C)|TELESYNC)"
+        pattern = re.compile(regex, flags=re.IGNORECASE)
+        matcher = pattern.search(self.__file_name)
 
-    def __match_video_codec(self) -> str:
-        pass
+        if matcher:
+            return matcher.group(0)[1:]
+        else:
+            return None
 
-    def __match_audio(self) -> str:
-        pass
+    def __match_video_codec(self) -> Union[str, None]:
+        """
+        Matches the video codec of the show.
+        """
+        regex = "[\\.\\s](NTSC|PAL|[xh][\\.\\s]?264|[xh][\\.\\s]?265|H264|H265)"
+        pattern = re.compile(regex, flags=re.IGNORECASE)
+        matcher = pattern.search(self.__file_name)
 
-    def __match_language(self) -> str:
-        pass
+        if matcher:
+            return matcher.group(0)[1:]
+        else:
+            return None
 
-    def __match_edition(self) -> str:
-        pass
+    def __match_audio(self) -> Union[str, None]:
+        """
+        Matches the audio of the show.
+        """
+        regex = "AAC2[\\.\\s]0|AAC|AC3|DTS|DD5[\\.\\s]1"
+        pattern = re.compile(regex, flags=re.IGNORECASE)
+        matcher = pattern.search(self.__file_name)
 
-    def __match_tags(self) -> str:
-        pass
+        if matcher:
+            return matcher.group(0)
+        else:
+            return None
 
-    def __match_release_info(self) -> str:
-        pass
+    def __match_language(self) -> Union[str, None]:
+        """
+        Matches the language of the show.
+        """
+        regex = "[\\.\\s](MULTiSUBS|MULTi|NORDiC|DANiSH|SWEDiSH|NORWEGiAN|GERMAN|iTALiAN|FRENCH|SPANiSH)"
+        pattern = re.compile(regex, flags=re.IGNORECASE)
+        matcher = pattern.search(self.__file_name)
 
-    def __match_season(self) -> str:
-        pass
+        if matcher:
+            return matcher.group(0)[1:]
+        else:
+            return None
 
-    def __match_episode(self) -> str:
-        pass
+    def __match_edition(self) -> Union[str, None]:
+        """
+        Matches the edition of the show.
+        """
+        regex = "UNRATED|DC|(Directors|EXTENDED)[\\.\\s](CUT|EDITION)|EXTENDED|3D|2D|\\bNF\\b"
+        pattern = re.compile(regex, flags=re.IGNORECASE)
+        matcher = pattern.search(self.__file_name)
 
-    def __match_(self) -> str:
-        pass
+        if matcher:
+            return matcher.group(0)[1:]
+        else:
+            return None
 
+    def __match_tags(self) -> Union[str, None]:
+        """
+        Matches the tags of the show.
+        """
+        regex = "COMPLETE|LiMiTED|iNTERNAL"
+        pattern = re.compile(regex, flags=re.IGNORECASE)
+        matcher = pattern.search(self.__file_name)
 
-"""
+        if matcher:
+            return matcher.group(0)
+        else:
+            return None
 
-/**
- * 
- *
- * @author c-eg, chris-sutcliffe
- */
-public class ShowInfoMatcher {
-    private final String title;
-    private final String year;
-    private final String resolution;
-    private final String source;
-    private final String videoCodec;
-    private final String audio;
-    private final String language;
-    private final String edition;
-    private final String tags;
-    private final String releaseInfo;
-    private final String season;
-    private final String episode;
-    private final String releaseGroup;
+    def __match_release_info(self) -> Union[str, None]:
+        """
+        Matches the release info of the show.
+        """
+        regex = "[\\.\\s](REAL[\\.\\s]PROPER|PROPER|REPACK|READNFO|READ[\\.\\s]NFO|DiRFiX|NFOFiX)"
+        pattern = re.compile(regex, flags=re.IGNORECASE)
+        matcher = pattern.search(self.__file_name)
 
-    /**
-     * Constructor for ShowInfo.
-     *
-     * @param showFile show string to get info from
-     *                 e.g.  Movie.Name.2017.1080p.BluRay.x264
-     */
-    public ShowInfoMatcher(String showFile) {
-        title = matchTitle(showFile);
-        year = matchYear(showFile);
-        resolution = matchResolution(showFile);
-        source = matchSource(showFile);
-        videoCodec = matchVideoCodec(showFile);
-        audio = matchAudio(showFile);
-        language = matchLanguage(showFile);
-        edition = matchEdition(showFile);
-        tags = matchTags(showFile);
-        releaseInfo = matchReleaseInfo(showFile);
-        season = matchSeason(showFile);
-        episode = matchEpisode(showFile);
-        releaseGroup = matchReleaseGroup(showFile);
-    }
+        if matcher:
+            return matcher.group(0)[1:]
+        else:
+            return None
 
-    /**
-     * Function to match the title from the showFile passed.
-     *
-     * @param showFile show string to get info from
-     * @return title of show
-     */
-    private static String matchTitle(final String showFile) {
-        Pattern moviePattern = Pattern.compile("(.*?)(\\W| - )(directors(.?)cut|480p|720p|1080p|dvdrip|xvid|cd[0-9]|bluray|dvdscr|brrip|divx|S[0-9]{1,3}E[0-9]{1,3}|Season[\\s,0-9]{1,4}|[\\{\\(\\[]?[0-9]{4}).*", Pattern.CASE_INSENSITIVE);
-        Matcher movieMatcher = moviePattern.matcher(showFile);
-        String name;
+    def __match_season(self) -> Union[str, None]:
+        """
+        Matches the season of the show.
+        """
+        regex = "(?:s|season)(\\d{1,3})"
+        pattern = re.compile(regex, flags=re.IGNORECASE)
+        matcher = pattern.search(self.__file_name)
 
-        if (movieMatcher.find() && movieMatcher.group(1) != null) {
-            name = movieMatcher.group(1).replaceAll("\\.", " ").trim();
-        }
-        else {
-            name = showFile;
-        }
+        if matcher:
+            return matcher.group(0)[1:]
+        else:
+            return None
 
-        return name;
-    }
+    def __match_episode(self) -> Union[str, None]:
+        """
+        Function to match the episode number from the showFile passed.
 
-    /**
-     * Function to match the year from the showFile passed.
-     *
-     * @param showFile show string to get info from
-     * @return year of show, or null it if doesn't exist
-     */
-    private static String matchYear(final String showFile) {
-        String s = matchRegex(showFile, "[\\.\\s](?!^)[1,2]\\d{3}[\\.\\s]");
-        if (s != null) {
-            return s.substring(1, s.length() - 1);
-        }
-        else
-            return null;
-    }
+        Works in formats:
+        - episode/eXXX
+        - episode/eXXXeXXXeXXX
+        - episode/eXXX-XXX-XXX
 
-    /**
-     * Function to match the resolution from the showFile passed.
-     *
-     * @param showFile show string to get info from
-     * @return resolution of show, or null it if doesn't exist
-     */
-    private static String matchResolution(final String showFile) {
-        return matchRegex(showFile, "\\d{3,4}p", Pattern.CASE_INSENSITIVE);
-    }
+        :return: episode number of show, or null it if doesn't exist
+        """
+        regex = "e(?:(\\d{1,3})|(\\d{1,3}([e-]\\d{1,3})+))"
+        pattern = re.compile(regex, flags=re.IGNORECASE)
+        matcher = pattern.search(self.__file_name)
 
-    /**
-     * Function to match the source from the showFile passed.
-     *
-     * @param showFile show string to get info from
-     * @return source of show, or null it if doesn't exist
-     */
-    private static String matchSource(final String showFile) {
-        //String s = matchRegex(showFile, "[\\.\\s](CAM|(DVD|BD)SCR|SCR|DDC|R5[\\.\\s]LINE|R5|(DVD|HD|BR|BD|WEB)Rip|DVDR|(HD|PD)TV|WEB-DL|WEBDL|BluRay|TS(?!C)|TELESYNC)", Pattern.CASE_INSENSITIVE);
-        String s = matchRegex(showFile, "[\\.\\s](CAM|(DVD|BD)SCR|SCR|DDC|R5[\\.\\s]LINE|R5|(DVD|HD|BR|BD|WEB)Rip|DVDR|(HD|PD)TV|WEB-DL|WEBDL|BluRay|Blu-Ray|TS(?!C)|TELESYNC)", Pattern.CASE_INSENSITIVE);
-        if (s != null) {
-            return s.substring(1);
-        }
-        else
-            return null;
-    }
+        if matcher:
+            return matcher.group(0).replace("e|-", ",")  # not sure if this is right but it was from java so?
+        else:
+            return None
 
-    /**
-     * Function to match the video format from the showFile passed.
-     *
-     * @param showFile show string to get info from
-     * @return video format of show, or null it if doesn't exist
-     */
-    private static String matchVideoCodec(final String showFile) {
-        //String s = matchRegex(showFile, "[\\.\\s](NTSC|PAL|[xh][\\.\\s]?264|H264)", Pattern.CASE_INSENSITIVE);
-        String s = matchRegex(showFile, "[\\.\\s](NTSC|PAL|[xh][\\.\\s]?264|[xh][\\.\\s]?265|H264|H265)", Pattern.CASE_INSENSITIVE);
-        if (s != null) {
-            return s.substring(1);
-        }
-        else
-            return null;
-    }
+    def __match_release_group(self) -> Union[str, None]:
+        """
+        Matches the release group of the show.
+        """
+        regex = "- ?([^\\-. ]+)$"
+        pattern = re.compile(regex, flags=re.IGNORECASE)
+        matcher = pattern.search(self.__file_name)
 
-    /**
-     * Function to match the audio format from the showFile passed.
-     *
-     * @param showFile show string to get info from
-     * @return audio format of show, or null it if doesn't exist
-     */
-    private static String matchAudio(final String showFile) {
-        return matchRegex(showFile, "AAC2[\\.\\s]0|AAC|AC3|DTS|DD5[\\.\\s]1", Pattern.CASE_INSENSITIVE);
-    }
-
-    /**
-     * Function to match the language from the showFile passed.
-     *
-     * @param showFile show string to get info from
-     * @return language of show, or null it if doesn't exist
-     */
-    private static String matchLanguage(final String showFile) {
-        String s = matchRegex(showFile, "[\\.\\s](MULTiSUBS|MULTi|NORDiC|DANiSH|SWEDiSH|NORWEGiAN|GERMAN|iTALiAN|FRENCH|SPANiSH)", Pattern.CASE_INSENSITIVE);
-        if (s != null) {
-            return s.substring(1);
-        }
-        else
-            return null;
-    }
-
-    /**
-     * Function to match the edition from the showFile passed.
-     *
-     * @param showFile show string to get info from
-     * @return edition of show, or null it if doesn't exist
-     */
-    private static String matchEdition(final String showFile) {
-        String s = matchRegex(showFile, "UNRATED|DC|(Directors|EXTENDED)[\\.\\s](CUT|EDITION)|EXTENDED|3D|2D|\\bNF\\b", Pattern.CASE_INSENSITIVE);
-        if (s != null) {
-            return s.substring(1);
-        }
-        else
-            return null;
-    }
-
-    /**
-     * Function to match the tags from the showFile passed.
-     *
-     * @param showFile show string to get info from
-     * @return tags of show, or null it if doesn't exist
-     */
-    private static String matchTags(final String showFile) {
-        return matchRegex(showFile, "COMPLETE|LiMiTED|iNTERNAL", Pattern.CASE_INSENSITIVE);
-    }
-
-    /**
-     * Function to match the release information from the showFile passed.
-     *
-     * @param showFile show string to get info from
-     * @return release of show, or null it if doesn't exist
-     */
-    private static String matchReleaseInfo(final String showFile) {
-        String s = matchRegex(showFile, "[\\.\\s](REAL[\\.\\s]PROPER|PROPER|REPACK|READNFO|READ[\\.\\s]NFO|DiRFiX|NFOFiX)", Pattern.CASE_INSENSITIVE);
-        if (s != null) {
-            return s.substring(1);
-        }
-        else
-            return null;
-    }
-
-    /**
-     * Function to match the season number from the showFile passed.
-     *
-     * @param showFile show string to get info from
-     * @return season number of show, or null it if doesn't exist
-     * <p>
-     * works in formats:
-     * - season/sXXX
-     */
-    private static String matchSeason(final String showFile) {
-        String s = matchRegex(showFile, "(?:s|season)(\\d{1,3})", Pattern.CASE_INSENSITIVE);
-        if (s != null) {
-            return s.substring(1);
-        }
-        else
-            return null;
-    }
-
-    /**
-     * Function to match the episode number from the showFile passed.
-     *
-     * @param showFile show string to get info from
-     * @return episode number of show, or null it if doesn't exist
-     * <p>
-     * works in formats:
-     * - episode/eXXX
-     * - episode/eXXXeXXXeXXX
-     * - episode/eXXX-XXX-XXX
-     */
-    private static String matchEpisode(final String showFile) {
-        String s = matchRegex(showFile, "e(?:(\\d{1,3})|(\\d{1,3}([e-]\\d{1,3})+))", Pattern.CASE_INSENSITIVE);
-        if (s != null) {
-            s = s.substring(1);
-            return s.replaceAll("e|-", ",");
-        }
-        else
-            return null;
-    }
-
-    /**
-     * Function to match the show release group from the showFile passed
-     *
-     * @param showFile show string to get info from
-     * @return release group of show, or null if it doesn't exist
-     */
-    private static String matchReleaseGroup(final String showFile) {
-        String s = matchRegex(showFile, "- ?([^\\-. ]+)$", Pattern.CASE_INSENSITIVE);
-        if (s != null) {
-            return s.substring(1);
-        }
-        else
-            return null;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getYear() {
-        return year;
-    }
-
-    public String getResolution() {
-        return resolution;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public String getVideoCodec() {
-        return videoCodec;
-    }
-
-    public String getAudio() {
-        return audio;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public String getEdition() {
-        return edition;
-    }
-
-    public String getTags() {
-        return tags;
-    }
-
-    public String getReleaseInfo() {
-        return releaseInfo;
-    }
-
-    public String getSeason() {
-        return season;
-    }
-
-    public String getEpisode() {
-        return episode;
-    }
-
-    public String getReleaseGroup() {
-        return releaseGroup;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s", this.title, this.year, this.resolution, this.source, this.videoCodec, this.audio, this.language, this.edition, this.tags, this.releaseInfo, this.season, this.episode);
-    }
-
-    public String toStringMetdata() {
-        return String.format("Title: %30s\n" + "Year: %31s\nResolution: %25s\nSource: %29s\nVideo codec: %24s\nAudio codec: %24s\nLanguage: %27s\nEdition: %28s\nTags: %31s\nRelease: %28s\nSeason: %29s\nEpisode: %28s\nReleaseGroup: %23s",
-                this.title, this.year, this.resolution, this.source, this.videoCodec, this.audio, this.language, this.edition, this.tags, this.releaseInfo, this.season, this.episode, this.releaseGroup);
-    }
-
-    /**
-     * Function to convert showInfoMatcher object to hash map.
-     *
-     * @return HashMap of showInfoMatcher
-     */
-    public HashMap<String, String> toHashMap() {
-        HashMap<String, String> fileData = new HashMap<>();
-
-        fileData.put("title", title);
-        fileData.put("year", year);
-        fileData.put("resolution", resolution);
-        fileData.put("source", source);
-        fileData.put("videoCodec", videoCodec);
-        fileData.put("audio", audio);
-        fileData.put("language", language);
-        fileData.put("edition", edition);
-        fileData.put("tags", tags);
-        fileData.put("releaseInfo", releaseInfo);
-        fileData.put("season", season);
-        fileData.put("episode", episode);
-        fileData.put("releaseGroup", releaseGroup);
-
-        return fileData;
-    }
-}
-
-"""
+        if matcher:
+            return matcher.group(0)[1:]
+        else:
+            return None
