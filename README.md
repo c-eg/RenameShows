@@ -1,5 +1,5 @@
 # RenameShows
-[![License](https://img.shields.io/github/license/c-eg/RenameShows)](LICENSE) [![Downloads](https://img.shields.io/github/downloads/c-eg/RenameShows/total)](DOWNLOADS) [![Version](https://img.shields.io/github/package-json/v/c-eg/RenameShows)](VERSION)
+[![Version](https://img.shields.io/github/package-json/v/c-eg/RenameShows)](VERSION) [![License](https://img.shields.io/github/license/c-eg/RenameShows)](LICENSE) [![Downloads](https://img.shields.io/github/downloads/c-eg/RenameShows/total)](DOWNLOADS) 
 
 Renames shows passed in to the specified format.
 
@@ -21,7 +21,7 @@ We plan to implement a React.js front end interface using Electron.
 We plan to implement a Command Line Interface, supporting flags to help rename show files.
 
 ## Contributors
- - Conor Egan (c-g)
+ - Conor Egan (c-eg)
  - Christopher Sutcliffe (chris-sutcliffe)
 
 ## License
