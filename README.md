@@ -5,14 +5,10 @@ Renames shows passed in to the specified format.
 
 ## Planned features
 ### Movie Database APIs
-These are not confirmed but more of an example to the kinds of APIs we want to implement to get show data.
-- [ ] The Movie DB
-- [ ] Utelly
-- [ ] IMDB
-- [ ] Entertainment Data Hub
-- [ ] GoWATCH
-- [ ] uNoGS
-- [ ] Streamzui
+These are the show database APIs we wish to integrate with.
+- [ ] [The Movie Database (TMDB)](https://www.themoviedb.org/)
+- [ ] [tvdv](https://thetvdb.com/)
+- [ ] [aniDB](https://anidb.net/)
 
 ### Graphical User Interface
 We plan to implement a React.js front end interface using Electron.
