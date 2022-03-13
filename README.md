@@ -8,7 +8,7 @@ Renames shows passed in to the specified format.
 These are the show database APIs we wish to integrate with.
 - [ ] [The Movie Database (TMDB)](https://www.themoviedb.org/)
 - [ ] [tvdv](https://thetvdb.com/)
-- [ ] [aniDB](https://anidb.net/)
+- [ ] [AniDB](https://anidb.net/)
 
 ### Graphical User Interface
 We plan to implement a React.js front end interface using Electron.
