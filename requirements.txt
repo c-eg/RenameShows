@@ -1,0 +1,4 @@
+black==22.1.0
+pylint==2.12.2
+python-dotenv==0.19.2
+requests==2.27.1
