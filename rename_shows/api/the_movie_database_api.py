@@ -26,8 +26,8 @@ class TheMovieDatabaseAPI(ShowDatabaseAPI):
     def test(self):
         # example of request to api
         response = requests.request(
-            url="https://api.themoviedb.org/3/search/movie?query=Spiderman&page=1&include_adult=true",
             method="GET",
+            url=f"{self.BASE_URL}search/movie?query=Spiderman&page=1&include_adult=true",
             headers=self.HEADERS
         )
 
