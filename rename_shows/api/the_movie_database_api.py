@@ -14,8 +14,6 @@ class TheMovieDatabaseAPI(ShowDatabaseAPI):
     """
 
     def __init__(self):
-        # TODO: Move .env loading to main file
-        dotenv.load_dotenv(dotenv.find_dotenv())  # load .env file
         self.BASE_URL = "https://api.themoviedb.org/3/"
         self.HEADERS = {
             'Authorization': f'Bearer {os.environ.get("THE_MOVIE_DB")}',
@@ -34,5 +32,6 @@ class TheMovieDatabaseAPI(ShowDatabaseAPI):
         print(json.loads(response.text))
 
 if __name__ == "__main__":
+    dotenv.load_dotenv(dotenv.find_dotenv())  # load .env file
     temp = TheMovieDatabaseAPI()
     temp.test()
