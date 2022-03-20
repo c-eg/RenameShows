@@ -16,6 +16,17 @@ We plan to implement a React.js front end interface using Electron.
 ### Command Line Interface
 We plan to implement a Command Line Interface, supporting flags to help rename show files.
 
+## Local development setup
+1) In the root project folder:
+```
+pip install -r requirements.txt
+pip install -e .
+```
+2) Copy `.env_template` and rename the copy to `.env`
+3) Go to the different API providers for movie, tv & anmie ([Movie Database APIs](#movie-database-apis)), create an account and generate an API token
+    1) For The Movie Database API, you will need to generate a "API Read Access Token (v4 auth)"
+4) Paste the API keys in the .env for the respective setting
+
 ## Contributors
  - Conor Egan (c-eg)
  - Christopher Sutcliffe (chris-sutcliffe)
