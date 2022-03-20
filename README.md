@@ -16,7 +16,7 @@ We plan to implement a React.js front end interface using Electron.
 ### Command Line Interface
 We plan to implement a Command Line Interface, supporting flags to help rename show files.
 
-## Local development setup
+## Local Development Setup
 1) In the root project folder:
 ```
 pip install -r requirements.txt
