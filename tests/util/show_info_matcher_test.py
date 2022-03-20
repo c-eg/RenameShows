@@ -1,48 +1,73 @@
 import unittest
+from cgi import test
 
 from rename_shows.util.show_info_matcher import ShowInfoMatcher
 
 
 class TestShowInfoMatcher(unittest.TestCase):
-
+    """
+    Unit test class to test ShowInfoMatcher in rename_shows/util/show_info_matcher.
+    """
     def test_match_title(self):
-        self.assertEqual(False)
+        self.assertTrue(False)
 
     def test_match_year(self):
-        self.assertEqual(False)
+        test_case = "some.random.movie.2010.1080p.blueray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "2010"
 
-    def test_match_resolution(self):
-        self.assertEqual(False)
+        self.assertEqual(show_info_matcher.year, expected_result)
+
+    def test_match_resolution_480p(self):
+        test_case = "some.random.movie.2010.480p.blueray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "480p"
+
+        self.assertEqual(show_info_matcher.resolution, expected_result)
+
+    def test_match_resolution_720p(self):
+        test_case = "some.random.movie.2010.720p.blueray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "720p"
+
+        self.assertEqual(show_info_matcher.resolution, expected_result)
+
+    def test_match_resolution_1080p(self):
+        test_case = "some.random.movie.2010.1080p.blueray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "1080p"
+
+        self.assertEqual(show_info_matcher.resolution, expected_result)
 
     def test_match_source(self):
-        self.assertEqual(False)
+        self.assertTrue(False)
 
     def test_match_video_codec(self):
-        self.assertEqual(False)
+        self.assertTrue(False)
 
     def test_match_audio(self):
-        self.assertEqual(False)
+        self.assertTrue(False)
 
     def test_match_language(self):
-        self.assertEqual(False)
+        self.assertTrue(False)
 
     def test_match_edition(self):
-        self.assertEqual(False)
+        self.assertTrue(False)
 
     def test_match_tags(self):
-        self.assertEqual(False)
+        self.assertTrue(False)
 
     def test_match_release_info(self):
-        self.assertEqual(False)
+        self.assertTrue(False)
 
     def test_match_season(self):
-        self.assertEqual(False)
+        self.assertTrue(False)
 
     def test_match_episode(self):
-        self.assertEqual(False)
+        self.assertTrue(False)
 
     def test_match_release_group(self):
-        self.assertEqual(False)
+        self.assertTrue(False)
 
 if __name__ == "__main__":
     unittest.main()
