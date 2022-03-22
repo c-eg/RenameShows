@@ -19,7 +19,6 @@ We plan to implement a Command Line Interface, supporting flags to help rename s
 ## Local Development Setup
 1) In the root project folder:
 ```
-pip install -r requirements.txt
 pip install -e .
 ```
 2) Copy `.env_template` and rename the copy to `.env`
