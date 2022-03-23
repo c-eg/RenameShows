@@ -1,5 +1,5 @@
 # RenameShows
-[![Version](https://img.shields.io/github/package-json/v/c-eg/RenameShows)](VERSION) [![License](https://img.shields.io/github/license/c-eg/RenameShows)](LICENSE) 
+[![License](https://img.shields.io/github/license/c-eg/RenameShows)](LICENSE) 
 
 Renames shows passed in to the specified format.
 
