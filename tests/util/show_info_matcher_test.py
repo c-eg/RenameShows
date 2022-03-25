@@ -417,56 +417,56 @@ class TestShowInfoMatcher(unittest.TestCase):
     def test_match_episode_e_dual_no_space(self):
         test_case = "some.random.tv.show.s01e0102.1080p.bluray.x264"
         show_info_matcher = ShowInfoMatcher(test_case)
-        expected_result = (1,)
+        expected_result = (1, 2)
 
         self.assertEqual(show_info_matcher.episode, expected_result)
 
     def test_match_episode_e_dual_hiphen(self):
         test_case = "some.random.tv.show.s01e01-02.1080p.bluray.x264"
         show_info_matcher = ShowInfoMatcher(test_case)
-        expected_result = (1,)
+        expected_result = (1, 2)
 
         self.assertEqual(show_info_matcher.episode, expected_result)
 
     def test_match_episode_e_dual_with_e(self):
         test_case = "some.random.tv.show.s01e01e02.1080p.bluray.x264"
         show_info_matcher = ShowInfoMatcher(test_case)
-        expected_result = (1,)
+        expected_result = (1, 2)
 
         self.assertEqual(show_info_matcher.episode, expected_result)
 
     def test_match_episode_e_dual_hiphen_e(self):
         test_case = "some.random.tv.show.s01e01-e02.1080p.bluray.x264"
         show_info_matcher = ShowInfoMatcher(test_case)
-        expected_result = (1,)
+        expected_result = (1, 2)
 
         self.assertEqual(show_info_matcher.episode, expected_result)
 
     def test_match_episode_e_3_digits(self):
         test_case = "some.random.tv.show.s01e199.1080p.bluray.x264"
         show_info_matcher = ShowInfoMatcher(test_case)
-        expected_result = (1,)
+        expected_result = (199,)
 
         self.assertEqual(show_info_matcher.episode, expected_result)
 
     def test_match_episode_e_dual_3_digits(self):
         test_case = "some.random.tv.show.s01e001004.1080p.bluray.x264"
         show_info_matcher = ShowInfoMatcher(test_case)
-        expected_result = (1,)
+        expected_result = (1, 4)
 
         self.assertEqual(show_info_matcher.episode, expected_result)
 
     def test_match_episode_e_dual_no_zero_padding_hiphen(self):
         test_case = "some.random.tv.show.s01e1-e2.1080p.bluray.x264"
         show_info_matcher = ShowInfoMatcher(test_case)
-        expected_result = (1,)
+        expected_result = (1, 2)
 
         self.assertEqual(show_info_matcher.episode, expected_result)
 
     def test_match_episode_e_dual_3_digit_hiphen_e(self):
         test_case = "some.random.tv.show.s01e001-e002.1080p.bluray.x264"
         show_info_matcher = ShowInfoMatcher(test_case)
-        expected_result = (1,)
+        expected_result = (1, 2)
 
         self.assertEqual(show_info_matcher.episode, expected_result)
 
