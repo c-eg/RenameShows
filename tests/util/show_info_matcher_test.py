@@ -279,12 +279,57 @@ class TestShowInfoMatcher(unittest.TestCase):
 
         self.assertEqual(show_info_matcher.tags, expected_result)
 
-
     """
     Release Info Tests
     """
-    # def test_match_release_info(self):
-    #     self.assertTrue(False)
+    def test_match_release_info_real_proper(self):
+        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.REAL.PROPER"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "REAL.PROPER"
+
+        self.assertEqual(show_info_matcher.release_info, expected_result)
+
+    def test_match_release_info_proper(self):
+        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.PROPER"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "PROPER"
+
+        self.assertEqual(show_info_matcher.release_info, expected_result)
+
+    def test_match_release_info_repack(self):
+        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.REPACK"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "REPACK"
+
+        self.assertEqual(show_info_matcher.release_info, expected_result)
+
+    def test_match_release_info_readnfo(self):
+        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.READNFO"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "READNFO"
+
+        self.assertEqual(show_info_matcher.release_info, expected_result)
+
+    def test_match_release_info_read_nfo(self):
+        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.READ.NFO"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "READ.NFO"
+
+        self.assertEqual(show_info_matcher.release_info, expected_result)
+
+    def test_match_release_info_dirfix(self):
+        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.DiRFiX"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "DiRFiX"
+
+        self.assertEqual(show_info_matcher.release_info, expected_result)
+
+    def test_match_release_info_nfofix(self):
+        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.NFOFiX"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "NFOFiX"
+
+        self.assertEqual(show_info_matcher.release_info, expected_result)
 
     """
     Season Tests
