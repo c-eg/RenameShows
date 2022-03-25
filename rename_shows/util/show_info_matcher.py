@@ -196,7 +196,7 @@ class ShowInfoMatcher:
         """
         Matches the season of the show.
         """
-        regex = "(?:s|season(?:[\\.\\s]?))(\\d{1,2})"
+        regex = "s(?:eason)?\\s*(\\d{1,2})"
         pattern = re.compile(regex, flags=re.IGNORECASE)
         matcher = pattern.search(self.__file_name)
 
@@ -210,13 +210,15 @@ class ShowInfoMatcher:
         Function to match the episode number from the showFile passed.
 
         Works in formats:
-        - episode/eXXX
-        - episode/eXXXeXXXeXXX
-        - episode/eXXX-XXX-XXX
+        - eXXX      | episodeXXX
+        - eXXXeXXX  | episodeXXXeXXX
+        - eXXX-XXX  | episodeXXX-XXX
+        - eXXX-eXXX | episodeXXX-eXXX
+        - eXXXYYY   | episodeXXXYYY
 
-        :return: episode number of show, or null it if doesn't exist
+        :return: tuple of episode numbers or None if none
         """
-        regex = "(?:(?<=e)|(?<=episode)|(?<=episode[\\.\\s]))(\\d{1,2})|((?<=-)\\d{1,2})"
+        regex = "e(?:pisode)?\\s*(\\d{1,3}(?!\\d)|\\d\\d\\d??)(?:-?e?(\\d{1,3}))?(?!\\d)"
         pattern = re.compile(regex, flags=re.IGNORECASE)
 
         result = pattern.findall(self.__file_name)
