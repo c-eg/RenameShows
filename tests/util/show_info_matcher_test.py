@@ -35,6 +35,13 @@ class TestShowInfoMatcher(unittest.TestCase):
 
         self.assertEqual(show_info_matcher.year, expected_result)
 
+    def test_match_year_with_title_number(self):
+        test_case = "some.random.movie.2012.2010.1080p.blueray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "2010"
+
+        self.assertEqual(show_info_matcher.year, expected_result)
+
     """
     Resolution Tests
     """
@@ -434,7 +441,6 @@ class TestShowInfoMatcher(unittest.TestCase):
         expected_result = None
 
         self.assertEqual(show_info_matcher.episode, expected_result)
-
 
     """
     Release Group Tests
