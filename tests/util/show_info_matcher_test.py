@@ -334,8 +334,33 @@ class TestShowInfoMatcher(unittest.TestCase):
     """
     Season Tests
     """
-    # def test_match_season(self):
-    #     self.assertTrue(False)
+    def test_match_season_s(self):
+        test_case = "some.random.tv.show.s01e01.1080p.bluray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = 1
+
+        self.assertEqual(show_info_matcher.season, expected_result)
+
+    def test_match_season_season(self):
+        test_case = "some.random.tv.show.season01e01.1080p.bluray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = 1
+
+        self.assertEqual(show_info_matcher.season, expected_result)
+
+    def test_match_season_season_with_space(self):
+        test_case = "some.random.tv.show.season 01e01.1080p.bluray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = 1
+
+        self.assertEqual(show_info_matcher.season, expected_result)
+
+    def test_match_season_two_digits(self):
+        test_case = "some.random.tv.show.s10e01.1080p.bluray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = 10
+
+        self.assertEqual(show_info_matcher.season, expected_result)
 
     """
     Episode Tests

@@ -38,8 +38,8 @@ class ShowInfoMatcher:
         self.edition: str = self.__match_edition()
         self.tags: str = self.__match_tags()
         self.release_info: str = self.__match_release_info()
-        self.season: str = self.__match_season()
-        self.episode: str = self.__match_episode()
+        self.season: int = self.__match_season()
+        self.episode: int = self.__match_episode()
         self.release_group: str = self.__match_release_group()
 
     def to_dictionary(self) -> dict:
@@ -192,16 +192,16 @@ class ShowInfoMatcher:
         else:
             return None
 
-    def __match_season(self) -> Union[str, None]:
+    def __match_season(self) -> Union[int, None]:
         """
         Matches the season of the show.
         """
-        regex = "(?:s|season)(\\d{1,3})"
+        regex = "(?:s|season(?:[\\.\\s]?))(\\d{1,2})"
         pattern = re.compile(regex, flags=re.IGNORECASE)
         matcher = pattern.search(self.__file_name)
 
         if matcher:
-            return matcher.group(0)[1:]
+            return int(matcher.group(1))
         else:
             return None
 
