@@ -162,7 +162,7 @@ class ShowInfoMatcher:
         matcher = pattern.search(self.__file_name)
 
         if matcher:
-            return matcher.group(0)[1:]
+            return matcher.group(0)
         else:
             return None
 
