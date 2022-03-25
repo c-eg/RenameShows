@@ -39,7 +39,7 @@ class ShowInfoMatcher:
         self.tags: str = self.__match_tags()
         self.release_info: str = self.__match_release_info()
         self.season: int = self.__match_season()
-        self.episode: int = self.__match_episode()
+        self.episode: tuple[int] = self.__match_episode()
         self.release_group: str = self.__match_release_group()
 
     def to_dictionary(self) -> dict:
@@ -205,7 +205,7 @@ class ShowInfoMatcher:
         else:
             return None
 
-    def __match_episode(self) -> Union[str, None]:
+    def __match_episode(self) -> Union[tuple[int], None]:
         """
         Function to match the episode number from the showFile passed.
 
@@ -216,12 +216,19 @@ class ShowInfoMatcher:
 
         :return: episode number of show, or null it if doesn't exist
         """
-        regex = "e(?:(\\d{1,3})|(\\d{1,3}([e-]\\d{1,3})+))"
+        regex = "(?:(?<=e)|(?<=episode)|(?<=episode[\\.\\s]))(\\d{1,2})|((?<=-)\\d{1,2})"
         pattern = re.compile(regex, flags=re.IGNORECASE)
-        matcher = pattern.search(self.__file_name)
 
-        if matcher:
-            return matcher.group(0).replace("e|-", ",")  # not sure if this is right but it was from java so?
+        result = pattern.findall(self.__file_name)
+        episodes = []
+
+        for res in result:
+            for item in res:
+                if item is not None and item != '':
+                    episodes.append(int(item))
+
+        if len(episodes) > 0:
+            return tuple(episodes)
         else:
             return None
 

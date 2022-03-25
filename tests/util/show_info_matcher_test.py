@@ -18,12 +18,12 @@ class TestShowInfoMatcher(unittest.TestCase):
 
         self.assertEqual(show_info_matcher.title, expected_result, "")
 
-    def test_match_title_contianing_year(self):
-        test_case = "some.random.movie.2012.2010.1080p.blueray.x264"
-        show_info_matcher = ShowInfoMatcher(test_case)
-        expected_result = "some random movie 2012"
+    # def test_match_title_contianing_year(self):
+    #     test_case = "some.random.movie.2012.2010.1080p.blueray.x264"
+    #     show_info_matcher = ShowInfoMatcher(test_case)
+    #     expected_result = "some random movie 2012"
 
-        self.assertEqual(show_info_matcher.title, expected_result)
+    #     self.assertEqual(show_info_matcher.title, expected_result)
 
     """
     Year Tests
@@ -365,8 +365,76 @@ class TestShowInfoMatcher(unittest.TestCase):
     """
     Episode Tests
     """
-    # def test_match_episode(self):
-    #     self.assertTrue(False)
+    def test_match_episode_episode(self):
+        test_case = "some.random.tv.show.s01episode01.1080p.bluray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = (1,)
+
+        self.assertEqual(show_info_matcher.episode, expected_result)
+
+    def test_match_episode_episode_with_space(self):
+        test_case = "some.random.tv.show.s01episode 01.1080p.bluray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = (1,)
+
+        self.assertEqual(show_info_matcher.episode, expected_result)
+
+    def test_match_episode_e(self):
+        test_case = "some.random.tv.show.s01e01.1080p.bluray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = (1,)
+
+        self.assertEqual(show_info_matcher.episode, expected_result)
+
+    def test_match_episode_e_two_digits(self):
+        test_case = "some.random.tv.show.s01e10.1080p.bluray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = (10,)
+
+        self.assertEqual(show_info_matcher.episode, expected_result)
+
+    def test_match_episode_dual_hiphen(self):
+        test_case = "some.random.tv.show.s01e01-02.1080p.bluray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = (1, 2)
+
+        self.assertEqual(show_info_matcher.episode, expected_result)
+
+    def test_match_episode_dual_no_space(self):
+        test_case = "some.random.tv.show.s01e0102.1080p.bluray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = (1, 2)
+
+        self.assertEqual(show_info_matcher.episode, expected_result)
+
+    def test_match_episode_dual_e(self):
+        test_case = "some.random.tv.show.s01e01e02.1080p.bluray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = (1, 2)
+
+        self.assertEqual(show_info_matcher.episode, expected_result)
+
+    def test_match_episode_dual_e_hiphen(self):
+        test_case = "some.random.tv.show.s01e01-e02.1080p.bluray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = (1, 2)
+
+        self.assertEqual(show_info_matcher.episode, expected_result)
+
+    def test_match_episode_dual_e(self):
+        test_case = "some.random.tv.show.s01e01e02.1080p.bluray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = (1, 2)
+
+        self.assertEqual(show_info_matcher.episode, expected_result)
+
+    def test_match_episode_no_match(self):
+        test_case = "some.random.tv.show.s01.1080p.bluray.x264"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = None
+
+        self.assertEqual(show_info_matcher.episode, expected_result)
+
 
     """
     Release Group Tests
