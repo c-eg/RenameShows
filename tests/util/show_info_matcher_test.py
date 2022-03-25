@@ -255,12 +255,30 @@ class TestShowInfoMatcher(unittest.TestCase):
 
         self.assertEqual(show_info_matcher.edition, expected_result)
 
-
     """
     Tags Tests
     """
-    # def test_match_tags(self):
-    #     self.assertTrue(False)
+    def test_match_tags_complete(self):
+        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.COMPLETE"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "COMPLETE"
+
+        self.assertEqual(show_info_matcher.tags, expected_result)
+
+    def test_match_tags_limited(self):
+        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.LiMiTED"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "LiMiTED"
+
+        self.assertEqual(show_info_matcher.tags, expected_result)
+
+    def test_match_tags_internal(self):
+        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL"
+        show_info_matcher = ShowInfoMatcher(test_case)
+        expected_result = "iNTERNAL"
+
+        self.assertEqual(show_info_matcher.tags, expected_result)
+
 
     """
     Release Info Tests
