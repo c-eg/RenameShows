@@ -21,6 +21,18 @@ class TVDBAPI:
         }
 
     def search(self, query: str, type: str = None, year: int = None) -> dict:
+        """
+        Searches TheMovieDatabase API for the query passed passed.
+
+        Args:
+            query: The query to search for.
+            type: The type to search for.
+                Can be 'movie', 'series', 'person', or 'company'.
+            year: The year of the show.
+    
+        Return:
+            the search response from TV DB API.
+        """
         pass
 
 if __name__ == "__main__":
