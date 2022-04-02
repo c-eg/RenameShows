@@ -9,6 +9,8 @@ import requests
 class TheMovieDatabaseAPI:
     """
     Class to send requests to The Movie Database (TMDB) API.
+
+    See https://developers.themoviedb.org/3/getting-started/introduction for the documentation.
     """
 
     def __init__(self):
