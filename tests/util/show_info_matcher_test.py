@@ -1,3 +1,20 @@
+"""
+This file is part of RenameShows.
+
+RenameShows is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+RenameShows is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
+"""
+
 import unittest
 
 from rename_shows.util.show_info_matcher import ShowInfoMatcher
@@ -11,6 +28,7 @@ class TestShowInfoMatcher(unittest.TestCase):
     """
     Title Tests
     """
+
     def test_match_title(self):
         test_case = "some.random.movie.2010.1080p.blueray.x264"
         show_info_matcher = ShowInfoMatcher(test_case)
@@ -28,6 +46,7 @@ class TestShowInfoMatcher(unittest.TestCase):
     """
     Year Tests
     """
+
     def test_match_year(self):
         test_case = "some.random.movie.2010.1080p.blueray.x264"
         show_info_matcher = ShowInfoMatcher(test_case)
@@ -45,6 +64,7 @@ class TestShowInfoMatcher(unittest.TestCase):
     """
     Resolution Tests
     """
+
     def test_match_resolution_480p(self):
         test_case = "some.random.movie.2010.480p.blueray.x264"
         show_info_matcher = ShowInfoMatcher(test_case)
@@ -81,6 +101,7 @@ class TestShowInfoMatcher(unittest.TestCase):
     """
     Audio Tests
     """
+
     def test_match_audio_aac(self):
         test_case = "some.random.movie.2010.1080p.blueray.aac.x264"
         show_info_matcher = ShowInfoMatcher(test_case)
@@ -119,6 +140,7 @@ class TestShowInfoMatcher(unittest.TestCase):
     """
     Language Tests
     """
+
     def test_match_language_multisubs(self):
         test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.MULTiSUBS"
         show_info_matcher = ShowInfoMatcher(test_case)
@@ -192,6 +214,7 @@ class TestShowInfoMatcher(unittest.TestCase):
     """
     Edition Tests
     """
+
     def test_match_edition_unrated(self):
         test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.UNRATED"
         show_info_matcher = ShowInfoMatcher(test_case)
@@ -207,28 +230,36 @@ class TestShowInfoMatcher(unittest.TestCase):
         self.assertEqual(show_info_matcher.edition, expected_result)
 
     def test_match_edition_directors_cut(self):
-        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.Directors.CUT"
+        test_case = (
+            "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.Directors.CUT"
+        )
         show_info_matcher = ShowInfoMatcher(test_case)
         expected_result = "Directors.CUT"
 
         self.assertEqual(show_info_matcher.edition, expected_result)
 
-    def test_match_edition_directors_cut(self):
-        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.Directors.EDITION"
+    def test_match_edition_directors_edition(self):
+        test_case = (
+            "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.Directors.EDITION"
+        )
         show_info_matcher = ShowInfoMatcher(test_case)
         expected_result = "Directors.EDITION"
 
         self.assertEqual(show_info_matcher.edition, expected_result)
 
     def test_match_edition_extended_cut(self):
-        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.EXTENDED.CUT"
+        test_case = (
+            "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.EXTENDED.CUT"
+        )
         show_info_matcher = ShowInfoMatcher(test_case)
         expected_result = "EXTENDED.CUT"
 
         self.assertEqual(show_info_matcher.edition, expected_result)
 
     def test_match_edition_extended_edition(self):
-        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.EXTENDED.EDITION"
+        test_case = (
+            "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.EXTENDED.EDITION"
+        )
         show_info_matcher = ShowInfoMatcher(test_case)
         expected_result = "EXTENDED.EDITION"
 
@@ -265,8 +296,11 @@ class TestShowInfoMatcher(unittest.TestCase):
     """
     Tags Tests
     """
+
     def test_match_tags_complete(self):
-        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.COMPLETE"
+        test_case = (
+            "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.COMPLETE"
+        )
         show_info_matcher = ShowInfoMatcher(test_case)
         expected_result = "COMPLETE"
 
@@ -280,7 +314,9 @@ class TestShowInfoMatcher(unittest.TestCase):
         self.assertEqual(show_info_matcher.tags, expected_result)
 
     def test_match_tags_internal(self):
-        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL"
+        test_case = (
+            "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL"
+        )
         show_info_matcher = ShowInfoMatcher(test_case)
         expected_result = "iNTERNAL"
 
@@ -289,22 +325,28 @@ class TestShowInfoMatcher(unittest.TestCase):
     """
     Release Info Tests
     """
+
     def test_match_release_info_real_proper(self):
-        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.REAL.PROPER"
+        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264. \
+            SPANiSH.NF.iNTERNAL.REAL.PROPER"
         show_info_matcher = ShowInfoMatcher(test_case)
         expected_result = "REAL.PROPER"
 
         self.assertEqual(show_info_matcher.release_info, expected_result)
 
     def test_match_release_info_proper(self):
-        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.PROPER"
+        test_case = (
+            "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.PROPER"
+        )
         show_info_matcher = ShowInfoMatcher(test_case)
         expected_result = "PROPER"
 
         self.assertEqual(show_info_matcher.release_info, expected_result)
 
     def test_match_release_info_repack(self):
-        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.REPACK"
+        test_case = (
+            "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.REPACK"
+        )
         show_info_matcher = ShowInfoMatcher(test_case)
         expected_result = "REPACK"
 
@@ -325,14 +367,18 @@ class TestShowInfoMatcher(unittest.TestCase):
         self.assertEqual(show_info_matcher.release_info, expected_result)
 
     def test_match_release_info_dirfix(self):
-        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.DiRFiX"
+        test_case = (
+            "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.DiRFiX"
+        )
         show_info_matcher = ShowInfoMatcher(test_case)
         expected_result = "DiRFiX"
 
         self.assertEqual(show_info_matcher.release_info, expected_result)
 
     def test_match_release_info_nfofix(self):
-        test_case = "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.NFOFiX"
+        test_case = (
+            "some.random.movie.2010.1080p.blueray.dd5.1.x264.SPANiSH.NF.iNTERNAL.NFOFiX"
+        )
         show_info_matcher = ShowInfoMatcher(test_case)
         expected_result = "NFOFiX"
 
@@ -341,6 +387,7 @@ class TestShowInfoMatcher(unittest.TestCase):
     """
     Season Tests
     """
+
     def test_match_season_s(self):
         test_case = "some.random.tv.show.s01e01.1080p.bluray.x264"
         show_info_matcher = ShowInfoMatcher(test_case)
@@ -372,6 +419,7 @@ class TestShowInfoMatcher(unittest.TestCase):
     """
     Episode Tests    
     """
+
     def test_match_episode_episode_no_space(self):
         test_case = "some.random.tv.show.s01episode01.1080p.bluray.x264"
         show_info_matcher = ShowInfoMatcher(test_case)
@@ -482,6 +530,7 @@ class TestShowInfoMatcher(unittest.TestCase):
     """
     # def test_match_release_group(self):
     #     self.assertTrue(False)
+
 
 if __name__ == "__main__":
     unittest.main()

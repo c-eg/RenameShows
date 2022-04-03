@@ -23,8 +23,14 @@ class ShowInfoMatcher:
     """
     Class to match show information from a the file name passed.
     """
+
     def __str__(self):
-        return  self.to_dictionary()
+        temp = ""
+
+        for key, value in self.to_dictionary().items():
+            temp += f"{key}:\t{value}\n"
+
+        return temp
 
     def __init__(self, file_name: str):
         self.__file_name = file_name
@@ -66,12 +72,15 @@ class ShowInfoMatcher:
         """
         Matches the title of the show.
         """
-        regex = "(.*?)(\\W| - )(directors(.?)cut|480p|720p|1080p|dvdrip|xvid|cd[0-9]|bluray|dvdscr|brrip|divx|S[0-9]{1,3}E[0-9]{1,3}|Season[\\s,0-9]{1,4}|[\\{\\(\\[]?[0-9]{4}).*"
+        regex = "(.*?)(\\W| - )(directors(.?)cut|480p|720p|1080p|dvdrip|xvid|cd[0-9]|bluray| \
+            dvdscr|brrip|divx|S[0-9]{1,3}E[0-9]{1,3}|Season[\\s,0-9]{1,4}|[\\{\\(\\[]?[0-9]{4}).*"
         pattern = re.compile(regex, flags=re.IGNORECASE)
         matcher = pattern.search(self.__file_name)
 
         if matcher:
-            return matcher.group(1).replace(".", " ").strip()  # remove leading and trailing whitespace
+            return (
+                matcher.group(1).replace(".", " ").strip()
+            )  # remove leading and trailing ' '
         else:
             return None
 
@@ -84,7 +93,7 @@ class ShowInfoMatcher:
         matcher = pattern.search(self.__file_name)
 
         if matcher:
-            return matcher.group(0).strip('.')  # remove leading and trailing '.'
+            return matcher.group(0).strip(".")  # remove leading and trailing '.'
         else:
             return None
 
@@ -105,7 +114,8 @@ class ShowInfoMatcher:
         """
         Matches the source of the show.
         """
-        regex = "[\\.\\s](CAM|(DVD|BD)SCR|SCR|DDC|R5[\\.\\s]LINE|R5|(DVD|HD|BR|BD|WEB)Rip|DVDR|(HD|PD)TV|WEB-DL|WEBDL|BluRay|Blu-Ray|TS(?!C)|TELESYNC)"
+        regex = "[\\.\\s](CAM|(DVD|BD)SCR|SCR|DDC|R5[\\.\\s]LINE|R5|(DVD|HD|BR|BD|WEB)Rip| \
+            DVDR|(HD|PD)TV|WEB-DL|WEBDL|BluRay|Blu-Ray|TS(?!C)|TELESYNC)"
         pattern = re.compile(regex, flags=re.IGNORECASE)
         matcher = pattern.search(self.__file_name)
 
@@ -144,7 +154,8 @@ class ShowInfoMatcher:
         """
         Matches the language of the show.
         """
-        regex = "[\\.\\s](MULTiSUBS|MULTi|NORDiC|DANiSH|SWEDiSH|NORWEGiAN|GERMAN|iTALiAN|FRENCH|SPANiSH)"
+        regex = "[\\.\\s](MULTiSUBS|MULTi|NORDiC|DANiSH|SWEDiSH|NORWEGiAN|GERMAN|iTALiAN| \
+            FRENCH|SPANiSH)"
         pattern = re.compile(regex, flags=re.IGNORECASE)
         matcher = pattern.search(self.__file_name)
 
@@ -218,7 +229,9 @@ class ShowInfoMatcher:
 
         :return: tuple of episode numbers or None if none
         """
-        regex = "e(?:pisode)?\\s*(\\d{1,3}(?!\\d)|\\d\\d\\d??)(?:-?e?(\\d{1,3}))?(?!\\d)"
+        regex = (
+            "e(?:pisode)?\\s*(\\d{1,3}(?!\\d)|\\d\\d\\d??)(?:-?e?(\\d{1,3}))?(?!\\d)"
+        )
         pattern = re.compile(regex, flags=re.IGNORECASE)
 
         result = pattern.findall(self.__file_name)
@@ -226,7 +239,7 @@ class ShowInfoMatcher:
 
         for res in result:
             for item in res:
-                if item is not None and item != '':
+                if item is not None and item != "":
                     episodes.append(int(item))
 
         if len(episodes) > 0:
