@@ -15,23 +15,26 @@ You should have received a copy of the GNU General Public License
 along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import dotenv
+
+from rename_shows.api.the_movie_database_api import TheMovieDatabaseAPI
 from rename_shows.util.show_info_matcher import ShowInfoMatcher
 
 
 def main():
     """For testing."""
-    test = ShowInfoMatcher("The.Good.Place.S04E11.1080p.NF.WEB-DL.DDP5.1.x264-AJP69")
-    print(test.to_dictionary())
+    test = ShowInfoMatcher("The.Fast.And.The.Furious.Tokyo.Drift.2004.1080p.blueray")
+    query = test.title
 
-    print("\n")
+    tmbd = TheMovieDatabaseAPI()
+    search_res = tmbd.search_movie(query=query)
 
-    test = ShowInfoMatcher(
-        "First.Man.2018.1080p.BluRay.REMUX.AVC.Atmos-EPSiLON.torrent"
-    )
-    print(test.to_dictionary())
+    new_title = search_res['results'][0]['title']
 
-    print("\n")
+    print(f"{query} --> {new_title}")
+
 
 
 if __name__ == "__main__":
+    dotenv.load_dotenv(dotenv.find_dotenv())
     main()
