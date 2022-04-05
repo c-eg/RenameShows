@@ -17,6 +17,7 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 
 import json
 import os
+from enum import Enum
 
 import dotenv
 import requests
@@ -36,21 +37,39 @@ class TVDBAPI:
         "Accept": "application/json",
     }
 
+    class MediaType(Enum):
+        """Class representing the media types the TVDBAPI can support."""
+        MOVIE = 'movie'
+        SERIES = 'series'
+        PERSON = 'person'
+        COMPANY = 'company'
+
     @staticmethod
-    def search(query: str, media_type: str = None, year: int = None) -> dict:
+    def search(query: str, media_type: MediaType = None, year: int = None) -> dict:
         """
         Searches TheMovieDatabase API for the query passed passed.
 
         Args:
             query: The query to search for.
-            media_type: The type to search for.
-                Can be 'movie', 'series', 'person', or 'company'.
+            media_type: The type to restrict the search by, 'None' searches for all types.
             year: The year of the show.
 
         Return:
             the search response from TV DB API.
         """
-        pass
+        query_formatted = query.replace(" ", "%20")
+
+        url = f"{TVDBAPI.BASE_URL}search?query={query_formatted}"
+
+        if media_type is not None:
+            url += f"&type={media_type.value}"
+
+        if year is not None:
+            url += f"&year={year}"
+
+        response = requests.get(url, headers=TVDBAPI.HEADERS)
+
+        return json.loads(response.content)
 
 
 if __name__ == "__main__":
