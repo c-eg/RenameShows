@@ -29,16 +29,16 @@ class TheMovieDatabaseAPI:
     See https://developers.themoviedb.org/3/getting-started/introduction for the documentation.
     """
 
-    BASE_URL = "https://api.themoviedb.org/3/"
-    HEADERS = {
-        "Authorization": f'Bearer {os.environ.get("THE_MOVIE_DB")}',
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-    }
+    def __init__(self):
+        self.api_url = "https://api.themoviedb.org/3/"
+        self.headers = {
+            "Authorization": f'Bearer {os.environ.get("THE_MOVIE_DB")}',
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
 
-    @staticmethod
     def search_movie(
-        query: str, page: int = 1, include_adult: bool = True, year: int = None
+        self, query: str, page: int = 1, include_adult: bool = True, year: int = None
     ) -> dict:
         """
         Searches TheMovieDatabase API for the movie passed.
@@ -54,18 +54,19 @@ class TheMovieDatabaseAPI:
         """
         query_formatted = query.replace(" ", "%20")
 
-        url = f"{TheMovieDatabaseAPI.BASE_URL}search/movie? \
-            query={query_formatted}&page={page}&include_adult={include_adult}"
+        url = f"{self.api_url}search/movie?query=" \
+            f"{query_formatted}&page={page}&include_adult={include_adult}"
+
+        print(url)
 
         if year is not None:
             url += f"&year={year}"
 
-        response = requests.get(url, headers=TheMovieDatabaseAPI.HEADERS)
+        response = requests.get(url, headers=self.headers)
 
         return json.loads(response.content)
 
-    @staticmethod
-    def get_movie_details(movie_id: int) -> dict:
+    def get_movie_details(self, movie_id: int) -> dict:
         """
         Gets the movie details from the id provided.
 
@@ -75,14 +76,13 @@ class TheMovieDatabaseAPI:
         Return:
             The details of the movie.
         """
-        url = f"{TheMovieDatabaseAPI.BASE_URL}movie/{movie_id}"
+        url = f"{self.api_url}movie/{movie_id}"
 
-        response = requests.get(url, headers=TheMovieDatabaseAPI.HEADERS)
+        response = requests.get(url, headers=self.headers)
 
         return json.loads(response.content)
 
-    @staticmethod
-    def search_tv_show(query: str, page: int = 1, include_adult: bool = True) -> dict:
+    def search_tv_show(self, query: str, page: int = 1, include_adult: bool = True) -> dict:
         """
         Searches TheMovieDatabase API for the tv show passed.
 
@@ -96,15 +96,14 @@ class TheMovieDatabaseAPI:
         """
         query_formatted = query.replace(" ", "%20")
 
-        url = f"{TheMovieDatabaseAPI.BASE_URL}search/tv? \
-            query={query_formatted}&page={page}&include_adult={include_adult}"
+        url = f"{self.api_url}search/tv?query=" \
+            f"{query_formatted}&page={page}&include_adult={include_adult}"
 
-        response = requests.get(url, headers=TheMovieDatabaseAPI.HEADERS)
+        response = requests.get(url, headers=self.headers)
 
         return json.loads(response.content)
 
-    @staticmethod
-    def get_tv_details(tv_id: int) -> dict:
+    def get_tv_details(self, tv_id: int) -> dict:
         """
         Gets the tv show details from the id provided.
 
@@ -114,14 +113,13 @@ class TheMovieDatabaseAPI:
         Return:
             The details of the tv show.
         """
-        url = f"{TheMovieDatabaseAPI.BASE_URL}tv/{tv_id}"
+        url = f"{self.api_url}tv/{tv_id}"
 
-        response = requests.get(url, headers=TheMovieDatabaseAPI.HEADERS)
+        response = requests.get(url, headers=self.headers)
 
         return json.loads(response.content)
 
-    @staticmethod
-    def get_tv_season_details(tv_id: int, season: int) -> dict:
+    def get_tv_season_details(self, tv_id: int, season: int) -> dict:
         """
         Gets the tv show season details from the id provided.
 
@@ -132,14 +130,13 @@ class TheMovieDatabaseAPI:
         Return:
             The season details of the tv show.
         """
-        url = f"{TheMovieDatabaseAPI.BASE_URL}tv/{tv_id}/season/{season}"
+        url = f"{self.api_url}tv/{tv_id}/season/{season}"
 
-        response = requests.get(url, headers=TheMovieDatabaseAPI.HEADERS)
+        response = requests.get(url, headers=self.headers)
 
         return json.loads(response.content)
 
-    @staticmethod
-    def get_tv_episode_details(tv_id: int, season: int, episode: int) -> dict:
+    def get_tv_episode_details(self, tv_id: int, season: int, episode: int) -> dict:
         """
         Gets the tv show episode details from the id provided.
 
@@ -151,9 +148,9 @@ class TheMovieDatabaseAPI:
         Return:
             The episode details of the tv show.
         """
-        url = f"{TheMovieDatabaseAPI.BASE_URL}tv/{tv_id}/season/{season}/epiosde/{episode}"
+        url = f"{self.api_url}tv/{tv_id}/season/{season}/epiosde/{episode}"
 
-        response = requests.get(url, headers=TheMovieDatabaseAPI.HEADERS)
+        response = requests.get(url, headers=self.headers)
 
         return json.loads(response.content)
 

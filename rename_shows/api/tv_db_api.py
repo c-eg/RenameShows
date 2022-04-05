@@ -30,12 +30,13 @@ class TVDBAPI:
     See: https://thetvdb.github.io/v4-api/#/ for the documentation.
     """
 
-    BASE_URL = "https://api4.thetvdb.com/v4/"
-    HEADERS = {
-        "Authorization": f'Bearer {os.environ.get("TV_DB")}',
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-    }
+    def __init__(self):
+        self.api_url = "https://api4.thetvdb.com/v4/"
+        self.headers = {
+            "Authorization": f'Bearer {os.environ.get("TV_DB")}',
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
 
     class MediaType(Enum):
         """Class representing the media types the TVDBAPI can support."""
@@ -44,8 +45,7 @@ class TVDBAPI:
         PERSON = 'person'
         COMPANY = 'company'
 
-    @staticmethod
-    def search(query: str, media_type: MediaType = None, year: int = None) -> dict:
+    def search(self, query: str, media_type: MediaType = None, year: int = None) -> dict:
         """
         Searches TheMovieDatabase API for the query passed passed.
 
@@ -59,7 +59,7 @@ class TVDBAPI:
         """
         query_formatted = query.replace(" ", "%20")
 
-        url = f"{TVDBAPI.BASE_URL}search?query={query_formatted}"
+        url = f"{self.api_url}search?query={query_formatted}"
 
         if media_type is not None:
             url += f"&type={media_type.value}"
@@ -67,7 +67,7 @@ class TVDBAPI:
         if year is not None:
             url += f"&year={year}"
 
-        response = requests.get(url, headers=TVDBAPI.HEADERS)
+        response = requests.get(url, headers=self.headers)
 
         return json.loads(response.content)
 
@@ -76,4 +76,5 @@ if __name__ == "__main__":
     # TODO: loading of .env should be moved to main or main's __init__ file
     dotenv.load_dotenv(dotenv.find_dotenv())  # load .env file
     temp = TVDBAPI()
-    temp.search("The Fast and The Furious")
+    res = temp.search(query="The Fast and The Furious", media_type=TVDBAPI.MediaType.MOVIE)
+    print(res)
