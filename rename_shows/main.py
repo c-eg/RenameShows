@@ -29,10 +29,9 @@ def main():
     tmbd = TheMovieDatabaseAPI()
     search_res = tmbd.search_movie(query=query)
 
-    new_title = search_res['results'][0]['title']
+    new_title = search_res["results"][0]["title"]
 
     print(f"{query} --> {new_title}")
-
 
 
 if __name__ == "__main__":

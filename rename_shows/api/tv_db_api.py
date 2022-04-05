@@ -40,12 +40,15 @@ class TVDBAPI:
 
     class MediaType(Enum):
         """Class representing the media types the TVDBAPI can support."""
-        MOVIE = 'movie'
-        SERIES = 'series'
-        PERSON = 'person'
-        COMPANY = 'company'
 
-    def search(self, query: str, media_type: MediaType = None, year: int = None) -> dict:
+        MOVIE = "movie"
+        SERIES = "series"
+        PERSON = "person"
+        COMPANY = "company"
+
+    def search(
+        self, query: str, media_type: MediaType = None, year: int = None
+    ) -> dict:
         """
         Searches TheMovieDatabase API for the query passed passed.
 
@@ -76,5 +79,7 @@ if __name__ == "__main__":
     # TODO: loading of .env should be moved to main or main's __init__ file
     dotenv.load_dotenv(dotenv.find_dotenv())  # load .env file
     temp = TVDBAPI()
-    res = temp.search(query="The Fast and The Furious", media_type=TVDBAPI.MediaType.MOVIE)
+    res = temp.search(
+        query="The Fast and The Furious", media_type=TVDBAPI.MediaType.MOVIE
+    )
     print(res)

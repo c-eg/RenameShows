@@ -54,8 +54,10 @@ class TheMovieDatabaseAPI:
         """
         query_formatted = query.replace(" ", "%20")
 
-        url = f"{self.api_url}search/movie?query=" \
-            f"{query_formatted}&page={page}&include_adult={include_adult}"
+        url = (
+            f"{self.api_url}search/movie?query={query_formatted}"
+            f"&page={page}&include_adult={include_adult}"
+        )
 
         print(url)
 
@@ -82,7 +84,9 @@ class TheMovieDatabaseAPI:
 
         return json.loads(response.content)
 
-    def search_tv_show(self, query: str, page: int = 1, include_adult: bool = True) -> dict:
+    def search_tv_show(
+        self, query: str, page: int = 1, include_adult: bool = True
+    ) -> dict:
         """
         Searches TheMovieDatabase API for the tv show passed.
 
@@ -96,8 +100,10 @@ class TheMovieDatabaseAPI:
         """
         query_formatted = query.replace(" ", "%20")
 
-        url = f"{self.api_url}search/tv?query=" \
-            f"{query_formatted}&page={page}&include_adult={include_adult}"
+        url = (
+            f"{self.api_url}search/tv?query={query_formatted}"
+            f"&page={page}&include_adult={include_adult}"
+        )
 
         response = requests.get(url, headers=self.headers)
 
