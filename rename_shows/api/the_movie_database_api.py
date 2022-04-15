@@ -59,8 +59,6 @@ class TheMovieDatabaseAPI:
             f"&page={page}&include_adult={include_adult}"
         )
 
-        print(url)
-
         if year is not None:
             url += f"&year={year}"
 
