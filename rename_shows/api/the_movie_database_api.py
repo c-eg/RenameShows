@@ -154,7 +154,7 @@ class TheMovieDatabaseAPI:
         Return:
             The episode details of the tv show.
         """
-        url = f"{self.api_url}tv/{tv_id}/season/{season}/epiosde/{episode}"
+        url = f"{self.api_url}tv/{tv_id}/season/{season}/episode/{episode}"
 
         response = requests.get(url, headers=self.headers)
 
