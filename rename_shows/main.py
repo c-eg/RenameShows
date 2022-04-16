@@ -17,21 +17,14 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 
 import dotenv
 
-from rename_shows.api.the_movie_database_api import TheMovieDatabaseAPI
-from rename_shows.util.show_info_matcher import ShowInfoMatcher
+from rename_shows.controller.rename_controller import RenameController
 
 
 def main():
     """For testing."""
-    test = ShowInfoMatcher("The.Fast.And.The.Furious.Tokyo.Drift.2004.1080p.blueray")
-    query = test.title
-
-    tmbd = TheMovieDatabaseAPI()
-    search_res = tmbd.search_movie(query=query)
-
-    new_title = search_res["results"][0]["title"]
-
-    print(f"{query} --> {new_title}")
+    rename_controller = RenameController()
+    rename_controller.load_dir(path="E:\\Downloads\\RenameShowsTest", recursive=True)
+    rename_controller.rename_files()
 
 
 if __name__ == "__main__":
