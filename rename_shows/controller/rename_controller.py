@@ -8,7 +8,7 @@ from rename_shows.util.show_info_matcher import ShowInfoMatcher
 
 class RenameController:
     """
-    Controller to rename show files.    
+    Controller to rename show files.
     """
 
     def __init__(self):
