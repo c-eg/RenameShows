@@ -24,6 +24,7 @@ def main():
     """For testing."""
     rename_controller = RenameController()
     rename_controller.load_dir(path="E:\\Downloads\\RenameShowsTest", recursive=True)
+    rename_controller.create_rename_suggestions()
     rename_controller.rename_files()
 
 
