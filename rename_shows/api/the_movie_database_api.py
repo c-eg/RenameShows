@@ -64,7 +64,6 @@ class TheMovieDatabaseAPI:
             url += f"&year={year}"
 
         response = self.session.get(url)
-
         return json.loads(response.content)
 
     def get_movie_details(self, movie_id: int) -> dict:
@@ -80,7 +79,6 @@ class TheMovieDatabaseAPI:
         url = f"{self.api_url}movie/{movie_id}"
 
         response = self.session.get(url)
-
         return json.loads(response.content)
 
     def search_tv_show(
@@ -105,7 +103,6 @@ class TheMovieDatabaseAPI:
         )
 
         response = self.session.get(url)
-
         return json.loads(response.content)
 
     def get_tv_details(self, tv_id: int) -> dict:
@@ -121,7 +118,6 @@ class TheMovieDatabaseAPI:
         url = f"{self.api_url}tv/{tv_id}"
 
         response = self.session.get(url)
-
         return json.loads(response.content)
 
     def get_tv_season_details(self, tv_id: int, season: int) -> dict:
@@ -138,7 +134,6 @@ class TheMovieDatabaseAPI:
         url = f"{self.api_url}tv/{tv_id}/season/{season}"
 
         response = self.session.get(url)
-
         return json.loads(response.content)
 
     def get_tv_episode_details(self, tv_id: int, season: int, episode: int) -> dict:
@@ -156,7 +151,6 @@ class TheMovieDatabaseAPI:
         url = f"{self.api_url}tv/{tv_id}/season/{season}/episode/{episode}"
 
         response = self.session.get(url)
-
         return json.loads(response.content)
 
 
