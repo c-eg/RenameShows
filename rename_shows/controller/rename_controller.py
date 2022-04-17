@@ -30,6 +30,7 @@ class RenameController:
 
     def __init__(self):
         self.__files: dict[str, tuple[str, str] | None] = {}
+        self.tmdb = TheMovieDatabaseAPI()
 
     def load_dir(self, path: str, recursive: bool = False) -> None:
         """
@@ -88,19 +89,18 @@ class RenameController:
             Suggested file name.
         """
         sim = ShowInfoMatcher(file_name)
-        tmdb = TheMovieDatabaseAPI()
         new_title = file_name
 
         # tv show
         if sim.season is not None and sim.episode is not None:
             try:
-                search_res = tmdb.search_tv_show(query=sim.title)
+                search_res = self.tmdb.search_tv_show(query=sim.title)
 
                 res_0 = search_res.get('results')[0]
                 name = res_0.get('name')
                 _id = res_0.get('id')
 
-                tmdb_episode_details = tmdb.get_tv_episode_details(_id, sim.season, sim.episode[0])
+                tmdb_episode_details = self.tmdb.get_tv_episode_details(_id, sim.season, sim.episode[0])
 
                 new_title = f"{name} - S{sim.season:02}E{sim.episode[0]:02} - {tmdb_episode_details['name']}"
             except ApiError:
@@ -108,7 +108,7 @@ class RenameController:
         # movie
         else:
             try:
-                search_res = tmdb.search_movie(query=sim.title)
+                search_res = self.tmdb.search_movie(query=sim.title)
 
                 res_0 = search_res.get('results')[0]
                 title = res_0.get('title')
