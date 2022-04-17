@@ -18,6 +18,7 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 import glob
 import os
 
+from rename_shows.api.api_error import ApiError
 from rename_shows.api.the_movie_database_api import TheMovieDatabaseAPI
 from rename_shows.util.show_info_matcher import ShowInfoMatcher
 
@@ -62,6 +63,10 @@ class RenameController:
         for file in self.__files:
             file_name = file[file.rfind(os.sep) + 1:file.rfind('.')]
             suggested_name = self._get_rename_suggestion(file_name=file_name)
+
+            if suggested_name is None:
+                continue
+
             self.__files[file] = (file_name, suggested_name)
 
     def _get_rename_suggestion(self, file_name: str) -> str:
@@ -88,23 +93,29 @@ class RenameController:
 
         # tv show
         if sim.season is not None and sim.episode is not None:
-            search_res = tmdb.search_tv_show(query=sim.title)
+            try:
+                search_res = tmdb.search_tv_show(query=sim.title)
 
-            res_0 = search_res['results'][0]
-            name = res_0['name']
-            _id = res_0['id']
+                res_0 = search_res.get('results')[0]
+                name = res_0.get('name')
+                _id = res_0.get('id')
 
-            tmdb_episode_details = tmdb.get_tv_episode_details(_id, sim.season, sim.episode[0])
+                tmdb_episode_details = tmdb.get_tv_episode_details(_id, sim.season, sim.episode[0])
 
-            new_title = f"{name} - S{sim.season:02}E{sim.episode[0]:02} - {tmdb_episode_details['name']}"
+                new_title = f"{name} - S{sim.season:02}E{sim.episode[0]:02} - {tmdb_episode_details['name']}"
+            except ApiError:
+                new_title = None
         # movie
         else:
-            search_res = tmdb.search_movie(query=sim.title)
+            try:
+                search_res = tmdb.search_movie(query=sim.title)
 
-            res_0 = search_res['results'][0]
-            title = res_0['title']
-            year = res_0['release_date']
+                res_0 = search_res.get('results')[0]
+                title = res_0.get('title')
+                year = res_0.get('release_date')
 
-            new_title = f"{title} ({year})"
+                new_title = f"{title} ({year})"
+            except ApiError:
+                new_title = None
 
         return new_title

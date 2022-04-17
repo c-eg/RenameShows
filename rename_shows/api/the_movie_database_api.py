@@ -20,6 +20,7 @@ import os
 
 import dotenv
 import requests
+from rename_shows.api.api_error import ApiError
 
 
 class TheMovieDatabaseAPI:
@@ -32,11 +33,13 @@ class TheMovieDatabaseAPI:
     def __init__(self):
         self.api_url = "https://api.themoviedb.org/3/"
         self.session = requests.Session()
-        self.session.headers.update({
-            "Authorization": f'Bearer {os.environ.get("THE_MOVIE_DB")}',
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        })
+        self.session.headers.update(
+            {
+                "Authorization": f'Bearer {os.environ.get("THE_MOVIE_DB")}',
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            }
+        )
 
     def search_movie(
         self, query: str, page: int = 1, include_adult: bool = True, year: int = None
@@ -52,6 +55,9 @@ class TheMovieDatabaseAPI:
 
         Return:
             The search response from TheMovieDatabase API.
+
+        Raises:
+            ApiError: If the API request fails.
         """
         query_formatted = query.replace(" ", "%20")
 
@@ -63,8 +69,10 @@ class TheMovieDatabaseAPI:
         if year is not None:
             url += f"&year={year}"
 
-        response = self.session.get(url)
-        return json.loads(response.content)
+        try:
+            return self._make_request(url)
+        except ApiError as exception:
+            raise ApiError(exception.status_code, exception.reason) from exception
 
     def get_movie_details(self, movie_id: int) -> dict:
         """
@@ -75,11 +83,16 @@ class TheMovieDatabaseAPI:
 
         Return:
             The details of the movie.
+
+        Raises:
+            ApiError: If the API request fails.
         """
         url = f"{self.api_url}movie/{movie_id}"
 
-        response = self.session.get(url)
-        return json.loads(response.content)
+        try:
+            return self._make_request(url)
+        except ApiError as exception:
+            raise ApiError(exception.status_code, exception.reason) from exception
 
     def search_tv_show(
         self, query: str, page: int = 1, include_adult: bool = True
@@ -94,6 +107,9 @@ class TheMovieDatabaseAPI:
 
         Return:
             The search response from TheMovieDatabase API.
+
+        Raises:
+            ApiError: If the API request fails.
         """
         query_formatted = query.replace(" ", "%20")
 
@@ -102,8 +118,10 @@ class TheMovieDatabaseAPI:
             f"&page={page}&include_adult={include_adult}"
         )
 
-        response = self.session.get(url)
-        return json.loads(response.content)
+        try:
+            return self._make_request(url)
+        except ApiError as exception:
+            raise ApiError(exception.status_code, exception.reason) from exception
 
     def get_tv_details(self, tv_id: int) -> dict:
         """
@@ -114,11 +132,16 @@ class TheMovieDatabaseAPI:
 
         Return:
             The details of the tv show.
+
+        Raises:
+            ApiError: If the API request fails.
         """
         url = f"{self.api_url}tv/{tv_id}"
 
-        response = self.session.get(url)
-        return json.loads(response.content)
+        try:
+            return self._make_request(url)
+        except ApiError as exception:
+            raise ApiError(exception.status_code, exception.reason) from exception
 
     def get_tv_season_details(self, tv_id: int, season: int) -> dict:
         """
@@ -130,11 +153,16 @@ class TheMovieDatabaseAPI:
 
         Return:
             The season details of the tv show.
+
+        Raises:
+            ApiError: If the API request fails.
         """
         url = f"{self.api_url}tv/{tv_id}/season/{season}"
 
-        response = self.session.get(url)
-        return json.loads(response.content)
+        try:
+            return self._make_request(url)
+        except ApiError as exception:
+            raise ApiError(exception.status_code, exception.reason) from exception
 
     def get_tv_episode_details(self, tv_id: int, season: int, episode: int) -> dict:
         """
@@ -147,11 +175,33 @@ class TheMovieDatabaseAPI:
 
         Return:
             The episode details of the tv show.
+
+        Raises:
+            ApiError: If the API request fails.
         """
         url = f"{self.api_url}tv/{tv_id}/season/{season}/episode/{episode}"
 
-        response = self.session.get(url)
-        return json.loads(response.content)
+        try:
+            return self._make_request(url)
+        except ApiError as exception:
+            raise ApiError(exception.status_code, exception.reason) from exception
+
+    def _make_request(self, url):
+        """
+        Function to make an API request for TheMovieDatabaseAPI.
+
+        Args:
+            url: The url for the request.
+
+        Raises:
+            ApiError: If the API request fails.
+        """
+        response: requests.Response = self.session.get(url)
+
+        if response.status_code == 200:
+            return json.loads(response.content)
+        else:
+            raise ApiError(response.status_code, response.reason)
 
 
 if __name__ == "__main__":
