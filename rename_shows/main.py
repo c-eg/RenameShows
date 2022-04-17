@@ -15,6 +15,8 @@ You should have received a copy of the GNU General Public License
 along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from datetime import datetime
+
 import dotenv
 
 from rename_shows.controller.rename_controller import RenameController
@@ -22,10 +24,15 @@ from rename_shows.controller.rename_controller import RenameController
 
 def main():
     """For testing."""
+    start = datetime.now()
+
     rename_controller = RenameController()
-    rename_controller.load_dir(path="E:\\Downloads\\RenameShowsTest", recursive=True)
+    rename_controller.load_dir(path="E:\\Downloads\\RenameShowsTest\\TESTING", recursive=True)
     rename_controller.create_rename_suggestions()
     rename_controller.rename_files()
+
+    end = datetime.now()
+    print(f"Time Taken: {(end - start)}")
 
 
 if __name__ == "__main__":
