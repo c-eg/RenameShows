@@ -31,11 +31,12 @@ class TheMovieDatabaseAPI:
 
     def __init__(self):
         self.api_url = "https://api.themoviedb.org/3/"
-        self.headers = {
+        self.session = requests.Session()
+        self.session.headers.update({
             "Authorization": f'Bearer {os.environ.get("THE_MOVIE_DB")}',
             "Content-Type": "application/json",
             "Accept": "application/json",
-        }
+        })
 
     def search_movie(
         self, query: str, page: int = 1, include_adult: bool = True, year: int = None
@@ -62,7 +63,7 @@ class TheMovieDatabaseAPI:
         if year is not None:
             url += f"&year={year}"
 
-        response = requests.get(url, headers=self.headers)
+        response = self.session.get(url)
 
         return json.loads(response.content)
 
@@ -78,7 +79,7 @@ class TheMovieDatabaseAPI:
         """
         url = f"{self.api_url}movie/{movie_id}"
 
-        response = requests.get(url, headers=self.headers)
+        response = self.session.get(url)
 
         return json.loads(response.content)
 
@@ -103,7 +104,7 @@ class TheMovieDatabaseAPI:
             f"&page={page}&include_adult={include_adult}"
         )
 
-        response = requests.get(url, headers=self.headers)
+        response = self.session.get(url)
 
         return json.loads(response.content)
 
@@ -119,7 +120,7 @@ class TheMovieDatabaseAPI:
         """
         url = f"{self.api_url}tv/{tv_id}"
 
-        response = requests.get(url, headers=self.headers)
+        response = self.session.get(url)
 
         return json.loads(response.content)
 
@@ -136,7 +137,7 @@ class TheMovieDatabaseAPI:
         """
         url = f"{self.api_url}tv/{tv_id}/season/{season}"
 
-        response = requests.get(url, headers=self.headers)
+        response = self.session.get(url)
 
         return json.loads(response.content)
 
@@ -154,7 +155,7 @@ class TheMovieDatabaseAPI:
         """
         url = f"{self.api_url}tv/{tv_id}/season/{season}/episode/{episode}"
 
-        response = requests.get(url, headers=self.headers)
+        response = self.session.get(url)
 
         return json.loads(response.content)
 
