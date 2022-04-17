@@ -24,6 +24,8 @@ from rename_shows.controller.rename_controller import RenameController
 
 def main():
     """For testing."""
+    # directory = input("Directory: ")
+    # recursive = input("Include Subfolders?: ")
     start = datetime.now()
 
     rename_controller = RenameController()
@@ -33,6 +35,8 @@ def main():
 
     end = datetime.now()
     print(f"Time Taken: {(end - start)}")
+
+    # input("Press enter to exit.")
 
 
 if __name__ == "__main__":
