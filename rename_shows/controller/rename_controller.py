@@ -108,4 +108,3 @@ class RenameController:
             new_title = f"{title} ({year})"
 
         return new_title
-        
