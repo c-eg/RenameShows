@@ -21,6 +21,7 @@ from enum import Enum
 
 import dotenv
 import requests
+from rename_shows.api.api_error import ApiError
 
 
 class TVDBAPI:
@@ -32,11 +33,14 @@ class TVDBAPI:
 
     def __init__(self):
         self.api_url = "https://api4.thetvdb.com/v4/"
-        self.headers = {
-            "Authorization": f'Bearer {os.environ.get("TV_DB")}',
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        }
+        self.session = requests.Session()
+        self.session.headers.update(
+            {
+                "Authorization": f'Bearer {os.environ.get("TV_DB")}',
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            }
+        )
 
     class MediaType(Enum):
         """Class representing the media types the TVDBAPI can support."""
@@ -59,6 +63,9 @@ class TVDBAPI:
 
         Return:
             the search response from TV DB API.
+            
+        Raises:
+            ApiError: If the API request fails.
         """
         query_formatted = query.replace(" ", "%20")
 
@@ -70,9 +77,27 @@ class TVDBAPI:
         if year is not None:
             url += f"&year={year}"
 
-        response = requests.get(url, headers=self.headers)
+        try:
+            return self._make_request(url)
+        except ApiError as exception:
+            raise ApiError(exception.status_code, exception.reason) from exception
 
-        return json.loads(response.content)
+    def _make_request(self, url):
+        """
+        Function to make an API request for TheMovieDatabaseAPI.
+
+        Args:
+            url: The url for the request.
+
+        Raises:
+            ApiError: If the API request fails.
+        """
+        response: requests.Response = self.session.get(url)
+
+        if response.status_code == 200:
+            return json.loads(response.content)
+        else:
+            raise ApiError(response.status_code, response.reason)
 
 
 if __name__ == "__main__":
