@@ -200,8 +200,8 @@ class TheMovieDatabaseAPI:
 
         if response.status_code == 200:
             return json.loads(response.content)
-        else:
-            raise ApiError(response.status_code, response.reason)
+
+        raise ApiError(response.status_code, response.reason)
 
 
 if __name__ == "__main__":
