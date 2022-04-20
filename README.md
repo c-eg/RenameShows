@@ -6,7 +6,7 @@ Renames shows passed in to the specified format.
 ## Planned features
 ### Movie Database APIs
 These are the show database APIs we wish to integrate with.
-- [ ] [The Movie Database (TMDB)](https://www.themoviedb.org/)
+- [x] [The Movie Database (TMDB)](https://www.themoviedb.org/)
 - [ ] [tvdv](https://thetvdb.com/)
 - [ ] [AniDB](https://anidb.net/)
 
