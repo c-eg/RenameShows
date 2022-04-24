@@ -15,15 +15,14 @@ You should have received a copy of the GNU General Public License
 along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import json
 import os
 
 import dotenv
-import requests
 from rename_shows.api.api_error import ApiError
+from rename_shows.api.show_api import ShowAPI
 
 
-class TheMovieDatabaseAPI:
+class TheMovieDatabaseAPI(ShowAPI):
     """
     Class to send requests to The Movie Database (TMDB) API.
 
@@ -31,8 +30,9 @@ class TheMovieDatabaseAPI:
     """
 
     def __init__(self):
+        super().__init__()
+
         self.api_url = "https://api.themoviedb.org/3/"
-        self.session = requests.Session()
         self.session.headers.update(
             {
                 "Authorization": f'Bearer {os.environ.get("THE_MOVIE_DB")}',
@@ -40,6 +40,7 @@ class TheMovieDatabaseAPI:
                 "Accept": "application/json",
             }
         )
+
 
     def search_movie(
         self, query: str, page: int = 1, include_adult: bool = True, year: int = None
@@ -70,7 +71,7 @@ class TheMovieDatabaseAPI:
             url += f"&year={year}"
 
         try:
-            return self._make_request(url)
+            return super()._make_request(url)
         except ApiError as exception:
             raise ApiError(exception.status_code, exception.reason) from exception
 
@@ -90,7 +91,7 @@ class TheMovieDatabaseAPI:
         url = f"{self.api_url}movie/{movie_id}"
 
         try:
-            return self._make_request(url)
+            return super()._make_request(url)
         except ApiError as exception:
             raise ApiError(exception.status_code, exception.reason) from exception
 
@@ -119,7 +120,7 @@ class TheMovieDatabaseAPI:
         )
 
         try:
-            return self._make_request(url)
+            return super()._make_request(url)
         except ApiError as exception:
             raise ApiError(exception.status_code, exception.reason) from exception
 
@@ -139,7 +140,7 @@ class TheMovieDatabaseAPI:
         url = f"{self.api_url}tv/{tv_id}"
 
         try:
-            return self._make_request(url)
+            return super()._make_request(url)
         except ApiError as exception:
             raise ApiError(exception.status_code, exception.reason) from exception
 
@@ -160,7 +161,7 @@ class TheMovieDatabaseAPI:
         url = f"{self.api_url}tv/{tv_id}/season/{season}"
 
         try:
-            return self._make_request(url)
+            return super()._make_request(url)
         except ApiError as exception:
             raise ApiError(exception.status_code, exception.reason) from exception
 
@@ -182,26 +183,9 @@ class TheMovieDatabaseAPI:
         url = f"{self.api_url}tv/{tv_id}/season/{season}/episode/{episode}"
 
         try:
-            return self._make_request(url)
+            return super()._make_request(url)
         except ApiError as exception:
             raise ApiError(exception.status_code, exception.reason) from exception
-
-    def _make_request(self, url):
-        """
-        Function to make an API request for TheMovieDatabaseAPI.
-
-        Args:
-            url: The url for the request.
-
-        Raises:
-            ApiError: If the API request fails.
-        """
-        response: requests.Response = self.session.get(url)
-
-        if response.status_code == 200:
-            return json.loads(response.content)
-
-        raise ApiError(response.status_code, response.reason)
 
 
 if __name__ == "__main__":

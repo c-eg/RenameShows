@@ -15,16 +15,15 @@ You should have received a copy of the GNU General Public License
 along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import json
 import os
 from enum import Enum
 
 import dotenv
-import requests
 from rename_shows.api.api_error import ApiError
+from rename_shows.api.show_api import ShowAPI
 
 
-class TVDBAPI:
+class TVDBAPI(ShowAPI):
     """
     Class to send requests to the TV DB API.
 
@@ -32,8 +31,9 @@ class TVDBAPI:
     """
 
     def __init__(self):
+        super().__init__()
+
         self.api_url = "https://api4.thetvdb.com/v4/"
-        self.session = requests.Session()
         self.session.headers.update(
             {
                 "Authorization": f'Bearer {os.environ.get("TV_DB")}',
@@ -63,7 +63,7 @@ class TVDBAPI:
 
         Return:
             the search response from TV DB API.
-            
+
         Raises:
             ApiError: If the API request fails.
         """
@@ -78,26 +78,9 @@ class TVDBAPI:
             url += f"&year={year}"
 
         try:
-            return self._make_request(url)
+            return super()._make_request(url)
         except ApiError as exception:
             raise ApiError(exception.status_code, exception.reason) from exception
-
-    def _make_request(self, url):
-        """
-        Function to make an API request for TheMovieDatabaseAPI.
-
-        Args:
-            url: The url for the request.
-
-        Raises:
-            ApiError: If the API request fails.
-        """
-        response: requests.Response = self.session.get(url)
-
-        if response.status_code == 200:
-            return json.loads(response.content)
-        else:
-            raise ApiError(response.status_code, response.reason)
 
 
 if __name__ == "__main__":
