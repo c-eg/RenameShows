@@ -20,7 +20,7 @@ import json
 from abc import ABC
 
 import requests
-from rename_shows.api.api_error import ApiError
+from rename_shows.core.api.api_error import ApiError
 
 
 class ShowAPI(ABC):

@@ -18,9 +18,9 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 import glob
 import os
 
-from rename_shows.api.api_error import ApiError
-from rename_shows.api.the_movie_database_api import TheMovieDatabaseAPI
-from rename_shows.util.show_info_matcher import ShowInfoMatcher
+from rename_shows.core.api.api_error import ApiError
+from rename_shows.core.api.the_movie_database_api import TheMovieDatabaseAPI
+from rename_shows.core.util.show_info_matcher import ShowInfoMatcher
 
 
 class RenameController:

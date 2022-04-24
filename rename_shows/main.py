@@ -19,7 +19,7 @@ from datetime import datetime
 
 import dotenv
 
-from rename_shows.controller.rename_controller import RenameController
+from rename_shows.core.controller.rename_controller import RenameController
 
 
 def main():
@@ -30,6 +30,7 @@ def main():
 
     rename_controller = RenameController()
     rename_controller.load_dir(path="E:\\Downloads\\RenameShowsTest\\TESTING", recursive=True)
+    # rename_controller.load_dir(path="E:\\Downloads\\Transcoded", recursive=True)
     rename_controller.create_rename_suggestions()
     rename_controller.rename_files()
 

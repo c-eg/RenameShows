@@ -18,8 +18,8 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 import os
 
 import dotenv
-from rename_shows.api.api_error import ApiError
-from rename_shows.api.show_api import ShowAPI
+from rename_shows.core.api.api_error import ApiError
+from rename_shows.core.api.show_api import ShowAPI
 
 
 class TheMovieDatabaseAPI(ShowAPI):
