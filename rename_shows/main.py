@@ -24,20 +24,20 @@ from rename_shows.core.controller.rename_controller import RenameController
 
 def main():
     """For testing."""
-    # directory = input("Directory: ")
-    # recursive = input("Include Subfolders?: ")
+    directory = input("Directory: ")
+    recursive = input("Include Subfolders?: ")
     start = datetime.now()
 
     rename_controller = RenameController()
-    rename_controller.load_dir(path="E:\\Downloads\\RenameShowsTest\\TESTING", recursive=True)
-    # rename_controller.load_dir(path="E:\\Downloads\\Transcoded", recursive=True)
+    # rename_controller.load_dir(path="E:\\Downloads\\RenameShowsTest\\TESTING", recursive=True)
+    rename_controller.load_dir(path=directory, recursive=recursive)
     rename_controller.create_rename_suggestions()
     rename_controller.rename_files()
 
     end = datetime.now()
     print(f"Time Taken: {(end - start)}")
 
-    # input("Press enter to exit.")
+    input("Press enter to exit.")
 
 
 if __name__ == "__main__":
