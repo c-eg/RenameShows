@@ -17,7 +17,7 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 
 import unittest
 
-from rename_shows.util.show_info_matcher import ShowInfoMatcher
+from rename_shows.core.util.show_info_matcher import ShowInfoMatcher
 
 
 class TestShowInfoMatcher(unittest.TestCase):

@@ -17,10 +17,12 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 
 
 import json
-from abc import ABC
+from abc import ABC, abstractmethod
 
 import requests
 from rename_shows.core.api.api_error import ApiError
+from rename_shows.core.model.episode import Episode
+from rename_shows.core.model.movie import Movie
 
 
 class ShowAPI(ABC):
@@ -31,17 +33,47 @@ class ShowAPI(ABC):
     def __init__(self):
         self.session = requests.Session()
 
-    def _make_request(self, url):
+    # @staticmethod
+    @abstractmethod
+    def find_movie_results(self, __title: str, __year: int) -> list[Movie]:
         """
-        Function to make an API request for TheMovieDatabaseAPI.
+        Find a movie from the API.
 
         Args:
-            url: The url for the request.
+            __title: The title of the movie.
+            __year: The year of the movie.
+
+        Returns:
+            A list of movie objects containing the movie information from the API.
+        """
+
+    # @staticmethod
+    @abstractmethod
+    def find_tv_episode_results(self, __title: str, __season: int, __episode: int) -> list[Episode]:
+        """
+        Find a tv episode from the API.
+
+        Args:
+            __title: The title of the tv episode.
+            __season: The season of the tv episode.
+            __episode: The episode of the tv episode.
+
+        Returns:
+            A list of tv episode objects containing the tv episode information from the API.
+        """
+
+    def _make_request(self, __url):
+        """
+        Function to make an API request.
+
+        Args:
+            __url: The url for the request.
 
         Raises:
             ApiError: If the API request fails.
         """
-        response: requests.Response = self.session.get(url)
+
+        response: requests.Response = self.session.get(__url)
 
         if response.status_code == 200:
             return json.loads(response.content)
