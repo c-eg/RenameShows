@@ -154,8 +154,7 @@ class ShowInfoMatcher:
         """
         Matches the language of the show.
         """
-        regex = "[\\.\\s](MULTiSUBS|MULTi|NORDiC|DANiSH|SWEDiSH|NORWEGiAN|GERMAN|iTALiAN| \
-            FRENCH|SPANiSH)"
+        regex = "[\\.\\s](MULTiSUBS|MULTi|NORDiC|DANiSH|SWEDiSH|NORWEGiAN|GERMAN|iTALiAN|FRENCH|SPANiSH)"
         pattern = re.compile(regex, flags=re.IGNORECASE)
         matcher = pattern.search(self.__file_name)
 
