@@ -72,8 +72,7 @@ class ShowInfoMatcher:
         """
         Matches the title of the show.
         """
-        regex = "(.*?)(\\W| - )(directors(.?)cut|480p|720p|1080p|dvdrip|xvid|cd[0-9]|bluray| \
-            dvdscr|brrip|divx|S[0-9]{1,3}E[0-9]{1,3}|Season[\\s,0-9]{1,4}|[\\{\\(\\[]?[0-9]{4}).*"
+        regex = "(.*?)(\\W| - )(directors(.?)cut|480p|720p|1080p|dvdrip|xvid|cd[0-9]|bluray|dvdscr|brrip|divx|S[0-9]{1,3}E[0-9]{1,3}|Season[\\s,0-9]{1,4}|[\\{\\(\\[]?[0-9]{4}).*"
         pattern = re.compile(regex, flags=re.IGNORECASE)
         matcher = pattern.search(self.__file_name)
 
@@ -114,8 +113,7 @@ class ShowInfoMatcher:
         """
         Matches the source of the show.
         """
-        regex = "[\\.\\s](CAM|(DVD|BD)SCR|SCR|DDC|R5[\\.\\s]LINE|R5|(DVD|HD|BR|BD|WEB)Rip| \
-            DVDR|(HD|PD)TV|WEB-DL|WEBDL|BluRay|Blu-Ray|TS(?!C)|TELESYNC)"
+        regex = "[\\.\\s](CAM|(DVD|BD)SCR|SCR|DDC|R5[\\.\\s]LINE|R5|(DVD|HD|BR|BD|WEB)Rip|DVDR|(HD|PD)TV|WEB-DL|WEBDL|BluRay|Blu-Ray|TS(?!C)|TELESYNC)"
         pattern = re.compile(regex, flags=re.IGNORECASE)
         matcher = pattern.search(self.__file_name)
 

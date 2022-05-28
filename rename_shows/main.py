@@ -32,7 +32,7 @@ def main():
     # rename_controller.load_dir(path="E:\\Downloads\\RenameShowsTest\\TESTING", recursive=True)
     rename_controller.load_dir(directory, recursive)
     rename_controller.create_suggestions()
-    rename_controller.rename_files()
+    rename_controller.rename_files(True)
 
     end = datetime.now()
     print(f"Time Taken: {(end - start)}")

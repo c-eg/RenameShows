@@ -47,13 +47,16 @@ class RenameController:
         for file in files:
             self.__files[file] = []
 
-    def create_suggestions(self):
-        """Creates suggestions for each file."""
+    def create_suggestions(self) -> None:
+        """
+        Creates suggestions for each file.
+        """
         for file in self.__files:
+            # get file name from full path
             file_name_start_index = file.rfind(os.sep) + 1
             file_name_end_index = file.rfind('.')
-
             file_name = file[file_name_start_index:file_name_end_index]
+
             sim = ShowInfoMatcher(file_name)
 
             # tv show

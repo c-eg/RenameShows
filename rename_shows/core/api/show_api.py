@@ -33,7 +33,6 @@ class ShowAPI(ABC):
     def __init__(self):
         self.session = requests.Session()
 
-    # @staticmethod
     @abstractmethod
     def find_movie_results(self, __title: str, __year: int) -> list[Movie]:
         """
@@ -47,7 +46,6 @@ class ShowAPI(ABC):
             A list of movie objects containing the movie information from the API.
         """
 
-    # @staticmethod
     @abstractmethod
     def find_tv_episode_results(self, __title: str, __season: int, __episode: int) -> list[Episode]:
         """
