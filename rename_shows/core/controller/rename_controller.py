@@ -58,6 +58,9 @@ class RenameController:
             file_name = file[file_name_start_index:file_name_end_index]
 
             sim = ShowInfoMatcher(file_name)
+            print()
+            print(sim.to_dictionary())
+            print()
 
             # tv show
             if sim.season is not None and sim.episode is not None:
@@ -75,6 +78,16 @@ class RenameController:
                     suggestion = f"{movie.title} ({movie.year})"
                     new_full_path = file.replace(file_name, suggestion)
                     self.__files[file].append(new_full_path)
+
+    def output_suggestions(self) -> None:
+        """
+        Outputs the original file against the suggestion.
+        """
+        for file, suggestions in self.__files.items():
+            if not suggestions:
+                continue
+
+            print(f"{file}\n{suggestions[0]}\n")
 
     def rename_files(self, print_output: bool = True) -> None:
         """
