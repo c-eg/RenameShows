@@ -58,9 +58,6 @@ class RenameController:
             file_name = file[file_name_start_index:file_name_end_index]
 
             sim = ShowInfoMatcher(file_name)
-            print()
-            print(sim.to_dictionary())
-            print()
 
             # tv show
             if sim.season is not None and sim.episode is not None:
