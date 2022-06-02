@@ -67,11 +67,14 @@ class TheMovieDatabaseAPI(ShowAPI):
             episode_title = res.get('name')
             _id = res.get('id')
 
-            episode_details = self._get_tv_episode_details(_id, __season, __episode)
-            episode_name = episode_details.get('name', None)
+            try:
+                episode_details = self._get_tv_episode_details(_id, __season, __episode)
+                episode_name = episode_details.get('name', None)
 
-            episode = Episode(episode_title, __season, __episode, episode_name)
-            episodes.append(episode)
+                episode = Episode(episode_title, __season, __episode, episode_name)
+                episodes.append(episode)
+            except ApiError:
+                continue
 
         return episodes
 
