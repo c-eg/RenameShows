@@ -18,6 +18,7 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 
 import json
 from abc import ABC, abstractmethod
+from typing import List
 
 import requests
 from rename_shows.core.api.api_error import ApiError
@@ -34,7 +35,7 @@ class ShowAPI(ABC):
         self.session = requests.Session()
 
     @abstractmethod
-    def find_movie_results(self, __title: str, __year: int) -> list[Movie]:
+    def find_movie_results(self, __title: str, __year: int) -> List[Movie]:
         """
         Find a movie from the API.
 
@@ -47,7 +48,7 @@ class ShowAPI(ABC):
         """
 
     @abstractmethod
-    def find_tv_episode_results(self, __title: str, __season: int, __episode: int) -> list[Episode]:
+    def find_tv_episode_results(self, __title: str, __season: int, __episode: int) -> List[Episode]:
         """
         Find a tv episode from the API.
 

@@ -16,6 +16,7 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import os
+from typing import List
 
 import dotenv
 from rename_shows.core.api.api_error import ApiError
@@ -44,7 +45,7 @@ class TheMovieDatabaseAPI(ShowAPI):
             }
         )
 
-    def find_movie_results(self, __title: str, __year: int = None) -> list[Movie]:
+    def find_movie_results(self, __title: str, __year: int = None) -> List[Movie]:
         movies = []
         search_res = self._search_movie(query=__title, year=__year)
         results = search_res.get('results')
@@ -58,7 +59,7 @@ class TheMovieDatabaseAPI(ShowAPI):
 
         return movies
 
-    def find_tv_episode_results(self, __title: str, __season: int, __episode: int) -> list[Episode]:
+    def find_tv_episode_results(self, __title: str, __season: int, __episode: int) -> List[Episode]:
         episodes = []
         search_res = self._search_tv_show(__title)
         results = search_res.get('results')
