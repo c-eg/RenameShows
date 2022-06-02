@@ -18,7 +18,6 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 import os
 from enum import Enum
 
-import dotenv
 from rename_shows.core.api.api_error import ApiError
 from rename_shows.core.api.show_api import ShowAPI
 
@@ -36,7 +35,7 @@ class TVDBAPI(ShowAPI):
         self.api_url = "https://api4.thetvdb.com/v4/"
         self.session.headers.update(
             {
-                "Authorization": f'Bearer {os.environ.get("TV_DB")}',
+                "Authorization": f'Bearer {os.getenv("TV_DB")}',
                 "Content-Type": "application/json",
                 "Accept": "application/json",
             }
@@ -51,15 +50,15 @@ class TVDBAPI(ShowAPI):
         COMPANY = "company"
 
     def search(
-        self, query: str, media_type: MediaType = None, year: int = None
+        self, __query: str, __media_type: MediaType = None, __year: int = None
     ) -> dict:
         """
         Searches TheMovieDatabase API for the query passed passed.
 
         Args:
-            query: The query to search for.
-            media_type: The type to restrict the search by, 'None' searches for all types.
-            year: The year of the show.
+            __query: The query to search for.
+            __media_type: The type to restrict the search by, 'None' searches for all types.
+            __year: The year of the show.
 
         Return:
             the search response from TV DB API.
@@ -67,27 +66,18 @@ class TVDBAPI(ShowAPI):
         Raises:
             ApiError: If the API request fails.
         """
-        query_formatted = query.replace(" ", "%20")
+        query_formatted = __query.replace(" ", "%20")
 
         url = f"{self.api_url}search?query={query_formatted}"
 
-        if media_type is not None:
-            url += f"&type={media_type.value}"
+        if __media_type is not None:
+            url += f"&type={__media_type.value}"
 
-        if year is not None:
-            url += f"&year={year}"
+        if __year is not None:
+            url += f"&year={__year}"
 
         try:
             return super()._make_request(url)
         except ApiError as exception:
             raise ApiError(exception.status_code, exception.reason) from exception
 
-
-if __name__ == "__main__":
-    # TODO: loading of .env should be moved to main or main's __init__ file
-    dotenv.load_dotenv(dotenv.find_dotenv())  # load .env file
-    temp = TVDBAPI()
-    res = temp.search(
-        query="The Fast and The Furious", media_type=TVDBAPI.MediaType.MOVIE
-    )
-    print(res)

@@ -19,7 +19,9 @@ import glob
 import os
 
 from rename_shows.core.api.api_error import ApiError
+from rename_shows.core.api.show_api import ShowAPI
 from rename_shows.core.api.the_movie_database_api import TheMovieDatabaseAPI
+from rename_shows.core.model.show import Show
 from rename_shows.core.util.show_info_matcher import ShowInfoMatcher
 
 
@@ -28,9 +30,9 @@ class RenameController:
     Controller to rename show files.
     """
 
-    def __init__(self):
-        self.__files: dict[str, tuple[str, str] | None] = {}
-        self.tmdb = TheMovieDatabaseAPI()
+    def __init__(self, show_api: ShowAPI = TheMovieDatabaseAPI()):
+        self.__files: dict[str, list[Show]] = {}
+        self.__show_api = show_api
 
     def load_dir(self, path: str, recursive: bool = False) -> None:
         """
@@ -43,79 +45,59 @@ class RenameController:
         files = glob.glob(pathname=f"{path}\\**/*.*", recursive=recursive)
 
         for file in files:
-            self.__files[file] = None
+            self.__files[file] = []
 
-    def rename_files(self) -> None:
+    def create_suggestions(self) -> None:
+        """
+        Creates suggestions for each file.
+        """
+        for file in self.__files:
+            # get file name from full path
+            file_name_start_index = file.rfind(os.sep) + 1
+            file_name_end_index = file.rfind('.')
+            file_name = file[file_name_start_index:file_name_end_index]
+
+            sim = ShowInfoMatcher(file_name)
+            print()
+            print(sim.to_dictionary())
+            print()
+
+            # tv show
+            if sim.season is not None and sim.episode is not None:
+                episodes = self.__show_api.find_tv_episode_results(sim.title, sim.season, sim.episode[0])
+                
+                for episode in episodes:
+                    suggestion =  f"{episode.title} - S{episode.season}E{episode.episode} - {episode.name}"
+                    new_full_path = file.replace(file_name, suggestion)
+                    self.__files[file].append(new_full_path)
+            # movie
+            else:
+                movies = self.__show_api.find_movie_results(sim.title, sim.year)
+
+                for movie in movies:
+                    suggestion = f"{movie.title} ({movie.year})"
+                    new_full_path = file.replace(file_name, suggestion)
+                    self.__files[file].append(new_full_path)
+
+    def output_suggestions(self) -> None:
+        """
+        Outputs the original file against the suggestion.
+        """
+        for file, suggestions in self.__files.items():
+            if not suggestions:
+                continue
+
+            print(f"{file}\n{suggestions[0]}\n")
+
+    def rename_files(self, print_output: bool = True) -> None:
         """
         Renames the files from the suggestions.
         """
-        for file, suggestion in self.__files.items():
-            if suggestion is None:
+        for file, suggestions in self.__files.items():
+            if not suggestions:
                 continue
 
-            new_file = file.replace(suggestion[0], suggestion[1])
-            print(f"{file}\n{new_file}\n")
-            os.rename(file, new_file)
+            if print_output:
+                print(f"{file}\n{suggestions[0]}\n")
 
-    def create_rename_suggestions(self) -> None:
-        """
-        Creates the Suggestion objects for each file.
-        """
-        for file in self.__files:
-            file_name = file[file.rfind(os.sep) + 1:file.rfind('.')]
-            suggested_name = self._get_rename_suggestion(file_name=file_name)
-
-            if suggested_name is None:
-                continue
-
-            self.__files[file] = (file_name, suggested_name)
-
-    def _get_rename_suggestion(self, file_name: str) -> str:
-        """
-        Gets the rename suggestion using a show database API.
-
-        TODO:
-        Make API calls async or threaded so can do multiple at once.
-
-        Make this work with any show API. Might have to make the show database api
-        classes more generic so they all inherit from an interface so i can pass a
-        'ShowDatabaseAPI' interface in params to allow it to rename as long as the
-        ShowDatabaseAPI follows the interface rules.
-
-        Args:
-            file_name: The name of the file (not path).
-
-        Returns:
-            Suggested file name.
-        """
-        sim = ShowInfoMatcher(file_name)
-        new_title = file_name
-
-        # tv show
-        if sim.season is not None and sim.episode is not None:
-            try:
-                search_res = self.tmdb.search_tv_show(query=sim.title)
-
-                res_0 = search_res.get('results')[0]
-                name = res_0.get('name')
-                _id = res_0.get('id')
-
-                tmdb_episode_details = self.tmdb.get_tv_episode_details(_id, sim.season, sim.episode[0])
-
-                new_title = f"{name} - S{sim.season:02}E{sim.episode[0]:02} - {tmdb_episode_details['name']}"
-            except ApiError:
-                new_title = None
-        # movie
-        else:
-            try:
-                search_res = self.tmdb.search_movie(query=sim.title)
-
-                res_0 = search_res.get('results')[0]
-                title = res_0.get('title')
-                year = res_0.get('release_date')
-
-                new_title = f"{title} ({year})"
-            except ApiError:
-                new_title = None
-
-        return new_title
+            os.rename(file, suggestions[0])

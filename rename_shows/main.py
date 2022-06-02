@@ -17,7 +17,7 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 
 from datetime import datetime
 
-import dotenv
+from dotenv import find_dotenv, load_dotenv
 
 from rename_shows.core.controller.rename_controller import RenameController
 
@@ -30,9 +30,9 @@ def main():
 
     rename_controller = RenameController()
     # rename_controller.load_dir(path="E:\\Downloads\\RenameShowsTest\\TESTING", recursive=True)
-    rename_controller.load_dir(path=directory, recursive=recursive)
-    rename_controller.create_rename_suggestions()
-    rename_controller.rename_files()
+    rename_controller.load_dir(directory, recursive)
+    rename_controller.create_suggestions()
+    rename_controller.rename_files(True)
 
     end = datetime.now()
     print(f"Time Taken: {(end - start)}")
@@ -41,5 +41,5 @@ def main():
 
 
 if __name__ == "__main__":
-    dotenv.load_dotenv(dotenv.find_dotenv())
+    load_dotenv(find_dotenv())
     main()
