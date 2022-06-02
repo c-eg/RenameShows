@@ -16,7 +16,7 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import re
-from typing import Union
+from typing import Union, Tuple
 
 
 class ShowInfoMatcher:
@@ -213,7 +213,7 @@ class ShowInfoMatcher:
         else:
             return None
 
-    def __match_episode(self) -> Union[tuple[int], None]:
+    def __match_episode(self) -> Union[Tuple[int], None]:
         """
         Function to match the episode number from the showFile passed.
 
