@@ -17,6 +17,7 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 
 import glob
 import os
+from typing import List
 
 from rename_shows.core.api.api_error import ApiError
 from rename_shows.core.api.show_api import ShowAPI
@@ -31,7 +32,7 @@ class RenameController:
     """
 
     def __init__(self, show_api: ShowAPI = TheMovieDatabaseAPI()):
-        self.__files: dict[str, list[Show]] = {}
+        self.__files: dict[str, List[Show]] = {}
         self.__show_api = show_api
 
     def load_dir(self, path: str, recursive: bool = False) -> None:
