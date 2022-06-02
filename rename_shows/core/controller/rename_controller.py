@@ -64,7 +64,7 @@ class RenameController:
                 episodes = self.__show_api.find_tv_episode_results(sim.title, sim.season, sim.episode[0])
                 
                 for episode in episodes:
-                    suggestion =  f"{episode.title} - S{episode.season}E{episode.episode} - {episode.name}"
+                    suggestion =  f"{episode.title} - S{episode.season:02}E{episode.episode:02} - {episode.name}"
                     new_full_path = file.replace(file_name, suggestion)
                     self.__files[file].append(new_full_path)
             # movie
