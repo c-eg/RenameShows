@@ -66,6 +66,9 @@ class RenameController:
                 
                 for episode in episodes:
                     suggestion =  f"{episode.title} - S{episode.season:02}E{episode.episode:02} - {episode.name}"
+                    
+                    suggestion = "".join(i for i in suggestion if i not in r'\/:*?"<>|')  # replace invalid chars on windows
+                    
                     new_full_path = file.replace(file_name, suggestion)
                     self.__files[file].append(new_full_path)
             # movie
@@ -87,15 +90,12 @@ class RenameController:
 
             print(f"{file}\n{suggestions[0]}\n")
 
-    def rename_files(self, print_output: bool = True) -> None:
+    def rename_files(self) -> None:
         """
         Renames the files from the suggestions.
         """
         for file, suggestions in self.__files.items():
             if not suggestions:
                 continue
-
-            if print_output:
-                print(f"{file}\n{suggestions[0]}\n")
 
             os.rename(file, suggestions[0])
