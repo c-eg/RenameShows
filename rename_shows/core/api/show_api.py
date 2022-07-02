@@ -24,6 +24,7 @@ import requests
 from rename_shows.core.api.api_error import ApiError
 from rename_shows.core.model.episode import Episode
 from rename_shows.core.model.movie import Movie
+from rename_shows.core.model.tv import Tv
 
 
 class ShowAPI(ABC):
@@ -48,7 +49,21 @@ class ShowAPI(ABC):
         """
 
     @abstractmethod
-    def find_tv_episode_results(self, __title: str, __season: int, __episode: int) -> List[Episode]:
+    def find_tv_results(self, __title: str) -> List[Tv]:
+        """
+        Find a tv show from the API.
+
+        Args:
+            __title: The title of the tv episode.
+
+        Returns:
+            A list of tv show objects containing the tv show information from the API.
+        """
+
+    @abstractmethod
+    def find_tv_episode_results(
+        self, __title: str, __season: int, __episode: int
+    ) -> List[Episode]:
         """
         Find a tv episode from the API.
 
@@ -71,10 +86,12 @@ class ShowAPI(ABC):
         Raises:
             ApiError: If the API request fails.
         """
+        try:
+            response: requests.Response = self.session.get(__url)
 
-        response: requests.Response = self.session.get(__url)
-
-        if response.status_code == 200:
-            return json.loads(response.content)
-
-        raise ApiError(response.status_code, response.reason)
+            if response.status_code == 200:
+                return json.loads(response.content)
+            else:
+                raise ApiError(response.status_code, response.reason)
+        except requests.exceptions.ContentDecodingError as exception:
+            raise ApiError(-3, exception.response)
