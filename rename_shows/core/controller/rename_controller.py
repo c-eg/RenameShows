@@ -15,8 +15,10 @@ You should have received a copy of the GNU General Public License
 along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import glob
+import concurrent.futures
+import multiprocessing
 import os
+import threading
 from typing import List
 
 from rename_shows.core.api.api_error import ApiError
@@ -43,42 +45,87 @@ class RenameController:
             path: Full path of directory.
             recursive: Whether to include subfolders or not (recursive).
         """
-        files = glob.glob(pathname=f"{path}\\**/*.*", recursive=recursive)
+        TYPES_ALLOWED = ("mp4", "mkv")
 
-        for file in files:
-            self.__files[file] = []
+        for file in os.scandir(path=path):
+            if file.is_dir():
+                self.__files[file] = []
+
+                if recursive:
+                    self.load_dir(file.path, recursive)
+            elif file.is_file():
+                if os.path.splitext(file)[1][1:] in TYPES_ALLOWED:
+                    self.__files[file] = []        
+
+    def _create_suggestion(self, file_path, file_name):
+        """Threaded function to create a suggestion given a file."""
+        print(file_path)
+        sim = ShowInfoMatcher(file_name)
+        suggestions = []
+
+        # no match found
+        if not sim.title:
+            return suggestions
+
+        # season
+        if sim.season and not sim.episode:
+            tvs = self.__show_api.find_tv_results(sim.title)
+
+            for tv in tvs:
+                suggestion = f"{tv.title}"
+                suggestion = "".join(
+                    i for i in suggestion if i not in r'\/:*?"<>|'
+                )  # replace invalid chars on windows
+
+                new_full_path = file_path.replace(file_name, suggestion)
+                suggestions.append(new_full_path)
+        # tv episode
+        elif sim.season and sim.episode:
+            episodes = self.__show_api.find_tv_episode_results(
+                sim.title, sim.season, sim.episode[0]
+            )
+
+            for episode in episodes:
+                suggestion = f"{episode.title} - S{episode.season:02}E{episode.episode:02} - {episode.name}"
+                suggestion = "".join(
+                    i for i in suggestion if i not in r'\/:*?"<>|'
+                )  # replace invalid chars on windows
+
+                new_full_path = file_path.replace(file_name, suggestion)
+                suggestions.append(new_full_path)
+        # movie
+        else:
+            movies = self.__show_api.find_movie_results(sim.title, sim.year)
+
+            for movie in movies:
+                suggestion = f"{movie.title} ({movie.year[:4]})"
+                suggestion = "".join(
+                    i for i in suggestion if i not in r'\/:*?"<>|'
+                )  # replace invalid chars on windows
+
+                new_full_path = file_path.replace(file_name, suggestion)
+                suggestions.append(new_full_path)
+
+        return suggestions
 
     def create_suggestions(self) -> None:
         """
         Creates suggestions for each file.
         """
+        threads = []
+
         for file in self.__files:
-            # get file name from full path
-            file_name_start_index = file.rfind(os.sep) + 1
-            file_name_end_index = file.rfind('.')
-            file_name = file[file_name_start_index:file_name_end_index]
+            self._create_suggestion(file.path, file.name)
+            # thread = threading.Thread(target=self._create_suggestion, args=(file.path, file.name,))
+            # threads.append(thread)
+            # thread.start()
 
-            sim = ShowInfoMatcher(file_name)
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(self._create_suggestion, file.path, file.name)
+                self.__files[file] = future.result()
 
-            # tv show
-            if sim.season is not None and sim.episode is not None:
-                episodes = self.__show_api.find_tv_episode_results(sim.title, sim.season, sim.episode[0])
-                
-                for episode in episodes:
-                    suggestion =  f"{episode.title} - S{episode.season:02}E{episode.episode:02} - {episode.name}"
-                    
-                    suggestion = "".join(i for i in suggestion if i not in r'\/:*?"<>|')  # replace invalid chars on windows
-                    
-                    new_full_path = file.replace(file_name, suggestion)
-                    self.__files[file].append(new_full_path)
-            # movie
-            else:
-                movies = self.__show_api.find_movie_results(sim.title, sim.year)
-
-                for movie in movies:
-                    suggestion = f"{movie.title} ({movie.year})"
-                    new_full_path = file.replace(file_name, suggestion)
-                    self.__files[file].append(new_full_path)
+        for thread in threads:
+            thread.join()
 
     def output_suggestions(self) -> None:
         """
@@ -88,7 +135,7 @@ class RenameController:
             if not suggestions:
                 continue
 
-            print(f"{file}\n{suggestions[0]}\n")
+            print(f"{file.path}\n{suggestions[0]}\n")
 
     def rename_files(self) -> None:
         """
