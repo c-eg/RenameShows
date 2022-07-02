@@ -24,6 +24,7 @@ from typing import List
 from rename_shows.core.api.api_error import ApiError
 from rename_shows.core.api.show_api import ShowAPI
 from rename_shows.core.api.the_movie_database_api import TheMovieDatabaseAPI
+from rename_shows.core.model.file import File
 from rename_shows.core.model.show import Show
 from rename_shows.core.util.show_info_matcher import ShowInfoMatcher
 
@@ -48,19 +49,20 @@ class RenameController:
         TYPES_ALLOWED = ("mp4", "mkv")
 
         for file in os.scandir(path=path):
+            f = File(file.path, file.name)
+
             if file.is_dir():
-                self.__files[file] = []
+                self.__files[f] = []
 
                 if recursive:
                     self.load_dir(file.path, recursive)
             elif file.is_file():
                 if os.path.splitext(file)[1][1:] in TYPES_ALLOWED:
-                    self.__files[file] = []        
+                    self.__files[f] = []
 
-    def _create_suggestion(self, file_path, file_name):
+    def _create_suggestion(self, file: File):
         """Threaded function to create a suggestion given a file."""
-        print(file_path)
-        sim = ShowInfoMatcher(file_name)
+        sim = ShowInfoMatcher(file.name)
         suggestions = []
 
         # no match found
@@ -77,7 +79,7 @@ class RenameController:
                     i for i in suggestion if i not in r'\/:*?"<>|'
                 )  # replace invalid chars on windows
 
-                new_full_path = file_path.replace(file_name, suggestion)
+                new_full_path = file.path.replace(file.name, suggestion)
                 suggestions.append(new_full_path)
         # tv episode
         elif sim.season and sim.episode:
@@ -91,7 +93,7 @@ class RenameController:
                     i for i in suggestion if i not in r'\/:*?"<>|'
                 )  # replace invalid chars on windows
 
-                new_full_path = file_path.replace(file_name, suggestion)
+                new_full_path = file.path.replace(file.name, suggestion)
                 suggestions.append(new_full_path)
         # movie
         else:
@@ -103,10 +105,10 @@ class RenameController:
                     i for i in suggestion if i not in r'\/:*?"<>|'
                 )  # replace invalid chars on windows
 
-                new_full_path = file_path.replace(file_name, suggestion)
+                new_full_path = file.path.replace(file.name, suggestion)
                 suggestions.append(new_full_path)
 
-        return suggestions
+        self.__files[file] = suggestions
 
     def create_suggestions(self) -> None:
         """
@@ -115,14 +117,9 @@ class RenameController:
         threads = []
 
         for file in self.__files:
-            self._create_suggestion(file.path, file.name)
-            # thread = threading.Thread(target=self._create_suggestion, args=(file.path, file.name,))
-            # threads.append(thread)
-            # thread.start()
-
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                future = executor.submit(self._create_suggestion, file.path, file.name)
-                self.__files[file] = future.result()
+            thread = threading.Thread(target=self._create_suggestion, args=(file,))
+            threads.append(thread)
+            thread.start()
 
         for thread in threads:
             thread.join()
