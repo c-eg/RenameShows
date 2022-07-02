@@ -16,15 +16,18 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import os
-from typing import List
+from operator import delitem
+from typing import Dict, List
 
 import dotenv
 from rename_shows.core.api.api_error import ApiError
 from rename_shows.core.api.show_api import ShowAPI
 from rename_shows.core.model.episode import Episode
 from rename_shows.core.model.movie import Movie
+from rename_shows.core.model.tv import Tv
 
 dotenv.load_dotenv(dotenv.find_dotenv())
+
 
 class TheMovieDatabaseAPI(ShowAPI):
     """
@@ -40,37 +43,49 @@ class TheMovieDatabaseAPI(ShowAPI):
         self.session.headers.update(
             {
                 "Authorization": f'Bearer {os.getenv("THE_MOVIE_DB")}',
-                "Content-Type": "application/json",
-                "Accept": "application/json",
             }
         )
 
     def find_movie_results(self, __title: str, __year: int = None) -> List[Movie]:
         movies = []
-        search_res = self._search_movie(query=__title, year=__year)
-        results = search_res.get('results')
+        search_res = self._search_movie(__title, 1, True, __year)
+        results = search_res.get("results")
 
         for res in results:
-            title = res.get('title', None)
-            year = res.get('release_date', None)
+            title = res.get("title", None)
+            year = res.get("release_date", None)
 
             movie = Movie(title, year)
             movies.append(movie)
 
         return movies
 
-    def find_tv_episode_results(self, __title: str, __season: int, __episode: int) -> List[Episode]:
-        episodes = []
+    def find_tv_results(self, __title: str) -> List[Tv]:
+        tvs = []
         search_res = self._search_tv_show(__title)
-        results = search_res.get('results')
+        results = search_res.get("results")
 
         for res in results:
-            episode_title = res.get('name')
-            _id = res.get('id')
+            tv_title = res.get("name")
+            tv = Tv(tv_title)
+            tvs.append(tv)
+
+        return tvs
+
+    def find_tv_episode_results(
+        self, __title: str, __season: int, __episode: int
+    ) -> List[Episode]:
+        episodes = []
+        search_res = self._search_tv_show(__title)
+        results = search_res.get("results")
+
+        for res in results:
+            episode_title = res.get("name")
+            _id = res.get("id")
 
             try:
                 episode_details = self._get_tv_episode_details(_id, __season, __episode)
-                episode_name = episode_details.get('name', None)
+                episode_name = episode_details.get("name", None)
 
                 episode = Episode(episode_title, __season, __episode, episode_name)
                 episodes.append(episode)
@@ -80,8 +95,12 @@ class TheMovieDatabaseAPI(ShowAPI):
         return episodes
 
     def _search_movie(
-        self, __query: str, __page: int = 1, __include_adult: bool = True, __year: int = None
-    ) -> dict:
+        self,
+        __query: str,
+        __page: int = 1,
+        __include_adult: bool = True,
+        __year: int = None,
+    ) -> Dict:
         """
         Searches TheMovieDatabase API for the movie passed.
 
@@ -202,7 +221,9 @@ class TheMovieDatabaseAPI(ShowAPI):
         except ApiError as exception:
             raise ApiError(exception.status_code, exception.reason) from exception
 
-    def _get_tv_episode_details(self, __tv_id: int, __season: int, __episode: int) -> dict:
+    def _get_tv_episode_details(
+        self, __tv_id: int, __season: int, __episode: int
+    ) -> dict:
         """
         Gets the tv show episode details from the id provided.
 
