@@ -62,16 +62,20 @@ class RenameController:
 
     def _create_suggestion(self, file: File):
         """Threaded function to create a suggestion given a file."""
-        sim = ShowInfoMatcher(file.name)
+        title = ShowInfoMatcher.match_title(file.name)
+        year = ShowInfoMatcher.match_year(file.name)
+        season = ShowInfoMatcher.match_season(file.name)
+        episode = ShowInfoMatcher.match_episode(file.name)
+
         suggestions = []
 
         # no match found
-        if not sim.title:
+        if not title:
             return suggestions
 
         # season
-        if sim.season and not sim.episode:
-            tvs = self.__show_api.find_tv_results(sim.title)
+        if season and not episode:
+            tvs = self.__show_api.find_tv_results(title)
 
             for tv in tvs:
                 suggestion = f"{tv.title}"
@@ -82,9 +86,9 @@ class RenameController:
                 new_full_path = file.path.replace(file.name, suggestion)
                 suggestions.append(new_full_path)
         # tv episode
-        elif sim.season and sim.episode:
+        elif season and episode:
             episodes = self.__show_api.find_tv_episode_results(
-                sim.title, sim.season, sim.episode[0]
+                title, season, episode[0]
             )
 
             for episode in episodes:
@@ -97,7 +101,7 @@ class RenameController:
                 suggestions.append(new_full_path)
         # movie
         else:
-            movies = self.__show_api.find_movie_results(sim.title, sim.year)
+            movies = self.__show_api.find_movie_results(title, year)
 
             for movie in movies:
                 suggestion = f"{movie.title} ({movie.year[:4]})"
