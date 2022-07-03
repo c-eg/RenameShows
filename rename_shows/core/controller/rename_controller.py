@@ -52,7 +52,7 @@ class RenameController:
             f = File(file.path, file.name)
 
             if file.is_dir():
-                self.__files[f] = []
+                # self.__files[f] = []
 
                 if recursive:
                     self.load_dir(file.path, recursive)
