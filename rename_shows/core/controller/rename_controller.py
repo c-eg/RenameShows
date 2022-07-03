@@ -15,8 +15,6 @@ You should have received a copy of the GNU General Public License
 along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import concurrent.futures
-import multiprocessing
 import os
 import threading
 from typing import List
