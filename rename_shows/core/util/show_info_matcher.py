@@ -29,7 +29,7 @@ class ShowInfoMatcher:
         """
         Matches the title of the show.
         """
-        regex = "(.*?)(\\W| - )(directors(.?)cut|480p|720p|1080p|dvdrip|xvid|cd[0-9]|bluray|dvdscr|brrip|divx|S[0-9]{1,3}E[0-9]{1,3}|Season[\\s,0-9]{1,4}|[\\{\\(\\[]?[0-9]{4}).*"
+        regex = r"(.*?)(\W| - )(directors(.?)cut|480p|720p|1080p|dvdrip|xvid|cd[0-9]|bluray|dvdscr|brrip|divx|S[0-9]{1,3}E[0-9]{1,3}|Season[\s,0-9]{1,4}|[\{\(\[]?[0-9]{4}).*"
         pattern = re.compile(regex, flags=re.IGNORECASE)
         matcher = pattern.search(file_name)
 
