@@ -47,7 +47,7 @@ class RenameController:
         TYPES_ALLOWED = ("mp4", "mkv")
 
         for file in os.scandir(path=path):
-            f = File(file.path, file.name)
+            f = File(file.path, file.name, os.path.splitext(file)[1])
 
             if file.is_dir():
                 # self.__files[f] = []
@@ -81,7 +81,7 @@ class RenameController:
                     i for i in suggestion if i not in r'\/:*?"<>|'
                 )  # replace invalid chars on windows
 
-                new_full_path = file.path.replace(file.name, suggestion)
+                new_full_path = f"{file.path}{file.file_ext}".replace(file.name, suggestion)
                 suggestions.append(new_full_path)
         # tv episode
         elif season and episode:
@@ -95,7 +95,7 @@ class RenameController:
                     i for i in suggestion if i not in r'\/:*?"<>|'
                 )  # replace invalid chars on windows
 
-                new_full_path = file.path.replace(file.name, suggestion)
+                new_full_path = f"{file.path}{file.file_ext}".replace(file.name, suggestion)
                 suggestions.append(new_full_path)
         # movie
         else:
@@ -107,7 +107,7 @@ class RenameController:
                     i for i in suggestion if i not in r'\/:*?"<>|'
                 )  # replace invalid chars on windows
 
-                new_full_path = file.path.replace(file.name, suggestion)
+                new_full_path = f"{file.path}{file.file_ext}".replace(file.name, suggestion)
                 suggestions.append(new_full_path)
 
         self.__files[file] = suggestions
@@ -144,4 +144,4 @@ class RenameController:
             if not suggestions:
                 continue
 
-            os.rename(file, suggestions[0])
+            os.rename(f"{file.path}", suggestions[0])

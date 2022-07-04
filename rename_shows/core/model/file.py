@@ -17,6 +17,7 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 
 
 class File:
-    def __init__(self, path, name):
+    def __init__(self, path, name, file_ext):
         self.path = path
         self.name = name
+        self.file_ext = file_ext

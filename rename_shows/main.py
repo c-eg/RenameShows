@@ -24,13 +24,13 @@ from rename_shows.core.controller.rename_controller import RenameController
 
 def main():
     """For testing."""
-    directory = input("Directory: ")
-    recursive = input("Include Subfolders?: ")
+    # directory = input("Directory: ")
+    # recursive = input("Include Subfolders?: ")
     start = datetime.now()
 
     rename_controller = RenameController()
-    # rename_controller.load_dir(path="E:\\Downloads\\RenameShowsTest\\TESTING", recursive=True)
-    rename_controller.load_dir(directory, recursive)
+    rename_controller.load_dir(path="E:\\Downloads\\Downloaded\\Below.Deck.Sailing.Yacht.S03.1080p.AMZN.WEBRip.DDP2.0.x264-NTb[rartv]", recursive=True)
+    # rename_controller.load_dir(directory, recursive)
     rename_controller.create_suggestions()
     rename_controller.output_suggestions()
     rename_controller.rename_files()
