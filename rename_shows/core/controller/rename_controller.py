@@ -17,7 +17,7 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 import threading
-from typing import List
+from typing import Dict, List
 
 from rename_shows.core.api.api_error import ApiError
 from rename_shows.core.api.show_api import ShowAPI
@@ -26,6 +26,8 @@ from rename_shows.core.model.file import File
 from rename_shows.core.model.show import Show
 from rename_shows.core.util.show_info_matcher import ShowInfoMatcher
 
+TYPES_ALLOWED = ("mp4", "mkv")
+
 
 class RenameController:
     """
@@ -33,10 +35,25 @@ class RenameController:
     """
 
     def __init__(self, show_api: ShowAPI = TheMovieDatabaseAPI()):
-        self.__files: dict[str, List[Show]] = {}
+        self.__files: Dict[str, List[Show]] = {}
         self.__show_api = show_api
 
-    def load_dir(self, path: str, recursive: bool = False) -> None:
+    def _load_dir(self, file, recursive: bool = False) -> File:
+        depth = self._get_depth(file.path)
+
+        if file.is_file():
+            if os.path.splitext(file)[1][1:] in TYPES_ALLOWED:
+                f = File(file.path, file.name, depth, os.path.splitext(file)[1])
+                self.__files[f] = []
+        elif file.is_dir():
+            f = File(file.path, file.name, depth)
+            self.__files[f] = []
+
+            if recursive:
+                for _file in os.scandir(path=file.path):
+                    self._load_dir(_file, recursive)
+
+    def load_source(self, path: str, recursive: bool = False) -> None:
         """
         Loads a directory from the path provided.
 
@@ -44,19 +61,13 @@ class RenameController:
             path: Full path of directory.
             recursive: Whether to include subfolders or not (recursive).
         """
-        TYPES_ALLOWED = ("mp4", "mkv")
-
         for file in os.scandir(path=path):
-            f = File(file.path, file.name, os.path.splitext(file)[1])
+            self._load_dir(file, True)
+        
+        self.__files = dict(sorted(self.__files.items(), key=lambda file: file[0].depth, reverse=recursive))
 
-            if file.is_dir():
-                # self.__files[f] = []
-
-                if recursive:
-                    self.load_dir(file.path, recursive)
-            elif file.is_file():
-                if os.path.splitext(file)[1][1:] in TYPES_ALLOWED:
-                    self.__files[f] = []
+    def _get_depth(self, path: str):
+        return len(path.split(os.sep))
 
     def _create_suggestion(self, file: File):
         """Threaded function to create a suggestion given a file."""
@@ -71,6 +82,13 @@ class RenameController:
         if not title:
             return suggestions
 
+        new_full_path = False
+
+        if file.file_ext is not False:
+            new_full_path = f"{file.path}{file.file_ext}"
+        else:
+            new_full_path = f"{file.path}"
+        
         # season
         if season and not episode:
             tvs = self.__show_api.find_tv_results(title)
@@ -81,7 +99,7 @@ class RenameController:
                     i for i in suggestion if i not in r'\/:*?"<>|'
                 )  # replace invalid chars on windows
 
-                new_full_path = f"{file.path}{file.file_ext}".replace(file.name, suggestion)
+                new_full_path = new_full_path.replace(file.name, suggestion)
                 suggestions.append(new_full_path)
         # tv episode
         elif season and episode:
@@ -95,7 +113,7 @@ class RenameController:
                     i for i in suggestion if i not in r'\/:*?"<>|'
                 )  # replace invalid chars on windows
 
-                new_full_path = f"{file.path}{file.file_ext}".replace(file.name, suggestion)
+                new_full_path = new_full_path.replace(file.name, suggestion)
                 suggestions.append(new_full_path)
         # movie
         else:
@@ -107,23 +125,23 @@ class RenameController:
                     i for i in suggestion if i not in r'\/:*?"<>|'
                 )  # replace invalid chars on windows
 
-                new_full_path = f"{file.path}{file.file_ext}".replace(file.name, suggestion)
+                new_full_path = new_full_path.replace(file.name, suggestion)
                 suggestions.append(new_full_path)
 
         self.__files[file] = suggestions
 
     def create_suggestions(self) -> None:
         """
-        Creates suggestions for each file.
+        Creates suggestions for each directory and file.
         """
-        threads = []
+        file_threads = []
 
         for file in self.__files:
             thread = threading.Thread(target=self._create_suggestion, args=(file,))
-            threads.append(thread)
+            file_threads.append(thread)
             thread.start()
 
-        for thread in threads:
+        for thread in file_threads:
             thread.join()
 
     def output_suggestions(self) -> None:

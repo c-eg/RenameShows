@@ -15,6 +15,7 @@ You should have received a copy of the GNU General Public License
 along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import re
 from datetime import datetime
 
 from dotenv import find_dotenv, load_dotenv
@@ -24,16 +25,20 @@ from rename_shows.core.controller.rename_controller import RenameController
 
 def main():
     """For testing."""
-    # directory = input("Directory: ")
-    # recursive = input("Include Subfolders?: ")
+    directory = input("Directory: ")
+    recursive = input("Include Subfolders?: ")
     start = datetime.now()
 
     rename_controller = RenameController()
-    rename_controller.load_dir(path="E:\\Downloads\\Downloaded\\Below.Deck.Sailing.Yacht.S03.1080p.AMZN.WEBRip.DDP2.0.x264-NTb[rartv]", recursive=True)
-    # rename_controller.load_dir(directory, recursive)
+    # rename_controller.load_source(path="E:\\Downloads\\Downloaded\\Errors", recursive=True)
+    rename_controller.load_source(directory, recursive)
     rename_controller.create_suggestions()
     rename_controller.output_suggestions()
-    rename_controller.rename_files()
+
+    rename = input("Rename? ")
+
+    if rename == True:
+        rename_controller.rename_files()
 
     end = datetime.now()
     print(f"Time Taken: {(end - start)}")
