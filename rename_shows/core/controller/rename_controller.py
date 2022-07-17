@@ -17,6 +17,7 @@ along with RenameShows.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 import threading
+import time
 from typing import Dict, List
 
 from rename_shows.core.api.api_error import ApiError
@@ -45,14 +46,13 @@ class RenameController:
             if os.path.splitext(file)[1][1:] in TYPES_ALLOWED:
                 f = File(file.path, file.name, depth, os.path.splitext(file)[1])
                 self.__files[f] = []
-            pass
         elif file.is_dir():
             f = File(file.path, file.name, depth)
             self.__files[f] = []
 
             if recursive:
                 for _file in os.scandir(path=file.path):
-                    self._load_dir(_file, recursive)
+                    self._load_dir(_file, False)
 
     def load_source(self, path: str, recursive: bool = False) -> None:
         """
@@ -101,7 +101,7 @@ class RenameController:
             if len(tvs) >= 1:
                 tv = tvs[0]
 
-                suggestion = f"{tv.title}"
+                suggestion = f"{tv.title} - Season {season:02}"
                 suggestion = "".join(
                     i for i in suggestion if i not in r'\/:*?"<>|'
                 )  # replace invalid chars on windows
@@ -159,6 +159,7 @@ class RenameController:
         for file in self.__files:
             thread = threading.Thread(target=self._create_suggestion, args=(file,))
             file_threads.append(thread)
+            time.sleep(0.1)
             thread.start()
 
         # make sure threads end before proceeding
