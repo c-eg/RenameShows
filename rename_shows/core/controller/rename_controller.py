@@ -45,6 +45,7 @@ class RenameController:
             if os.path.splitext(file)[1][1:] in TYPES_ALLOWED:
                 f = File(file.path, file.name, depth, os.path.splitext(file)[1])
                 self.__files[f] = []
+            pass
         elif file.is_dir():
             f = File(file.path, file.name, depth)
             self.__files[f] = []
@@ -64,6 +65,9 @@ class RenameController:
         for file in os.scandir(path=path):
             self._load_dir(file, True)
         
+        # sort files by depth, largest -> smallest
+        # this is needed to make sure files are renamed in the correct order
+        # so the full path is maintained and still correct.
         self.__files = dict(sorted(self.__files.items(), key=lambda file: file[0].depth, reverse=recursive))
 
     def _get_depth(self, path: str):
@@ -84,16 +88,19 @@ class RenameController:
 
         new_full_path = False
 
+        # check for file or dir, respectively
         if file.file_ext is not False:
             new_full_path = f"{file.path}{file.file_ext}"
         else:
             new_full_path = f"{file.path}"
         
-        # season
+        # season - likely to be dir
         if season and not episode:
             tvs = self.__show_api.find_tv_results(title)
 
-            for tv in tvs:
+            if len(tvs) >= 1:
+                tv = tvs[0]
+
                 suggestion = f"{tv.title}"
                 suggestion = "".join(
                     i for i in suggestion if i not in r'\/:*?"<>|'
@@ -107,8 +114,19 @@ class RenameController:
                 title, season, episode[0]
             )
 
-            for episode in episodes:
-                suggestion = f"{episode.title} - S{episode.season:02}E{episode.episode:02} - {episode.name}"
+            episode_length = len(episode)
+
+            if len(episodes) >= 1:
+                episode_res = episodes[0]
+                suggestion = False
+
+                # multi episode
+                if episode_length > 1:
+                    suggestion = f"{episode_res.title} - S{episode_res.season:02}E{episode[0]:02}-E{episode[episode_length - 1]:02}"
+                # single episode (normal)
+                else:
+                    suggestion = f"{episode_res.title} - S{episode_res.season:02}E{episode_res.episode:02} - {episode_res.name}"
+
                 suggestion = "".join(
                     i for i in suggestion if i not in r'\/:*?"<>|'
                 )  # replace invalid chars on windows
@@ -119,7 +137,9 @@ class RenameController:
         else:
             movies = self.__show_api.find_movie_results(title, year)
 
-            for movie in movies:
+            if len(movies) >= 1:
+                movie = movies[0]
+
                 suggestion = f"{movie.title} ({movie.year[:4]})"
                 suggestion = "".join(
                     i for i in suggestion if i not in r'\/:*?"<>|'
@@ -141,6 +161,7 @@ class RenameController:
             file_threads.append(thread)
             thread.start()
 
+        # make sure threads end before proceeding
         for thread in file_threads:
             thread.join()
 
@@ -162,4 +183,7 @@ class RenameController:
             if not suggestions:
                 continue
 
-            os.rename(f"{file.path}", suggestions[0])
+            try:
+                os.rename(f"{file.path}", suggestions[0])
+            except Exception:
+                continue
